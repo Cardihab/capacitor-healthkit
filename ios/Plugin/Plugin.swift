@@ -311,11 +311,10 @@ public class CapacitorHealthkit: CAPPlugin {
         let dateFormatter = DateFormatter();
         dateFormatter.dateFormat = "yyyy/MM/dd";
         
-        let now = Date()
         let startDate = dateFormatter.date(from: _startDate);
         
     
-        let _predicate = HKQuery.predicateForSamples(withStart: startDate, end: now, options: HKQueryOptions.strictStartDate);
+        let _predicate = HKQuery.predicateForSamples(withStart: startDate, end: _endDate, options: HKQueryOptions.strictStartDate);
         
         var _sampleType: HKSampleType? = nil;
         
@@ -930,11 +929,10 @@ public class CapacitorHealthkit: CAPPlugin {
         let dateFormatter = DateFormatter();
         dateFormatter.dateFormat = "yyyy/MM/dd";
         
-        let now = Date()
         let startDate = dateFormatter.date(from: _startDate);
         
     
-        let _predicate = HKQuery.predicateForSamples(withStart: startDate, end: now, options: HKQueryOptions.strictStartDate);
+        let _predicate = HKQuery.predicateForSamples(withStart: startDate, end: _endDate, options: HKQueryOptions.strictStartDate);
         
         var _sampleType: HKSampleType? = nil;
         
