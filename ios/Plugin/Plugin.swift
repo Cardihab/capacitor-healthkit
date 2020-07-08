@@ -287,7 +287,7 @@ public class CapacitorHealthkit: CAPPlugin {
         interval.day = 1
 
         var anchorComponents = calendar.dateComponents([.day, .month, .year, .weekday], from: NSDate() as Date)
-        anchorComponents.hour = 9
+        anchorComponents.hour = 0
 
         guard let _sampleName = call.options["sampleName"] as? String else {
             call.reject("Must provide sampleName")
@@ -358,7 +358,7 @@ public class CapacitorHealthkit: CAPPlugin {
             statsCollection.enumerateStatistics(from: startDate!, to: _endDate) { [unowned self] statistics, stop in
 
                 if let quantity = statistics.sumQuantity() {
-                    let date = statistics.startDate
+                    let date = calendar.date(byAdding: .hour, value: 9, to: statistics.startDate)
                     let value = quantity.doubleValue(for: HKUnit.count())
 
                     // Call a custom method to plot each data point.
