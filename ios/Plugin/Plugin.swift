@@ -374,7 +374,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     // Call a custom method to plot each data point.
                     output.append([
                         "count": value,
-                        "date": iso8601DateFormatter.string(from: date)
+                        "date": iso8601DateFormatter.string(from: date!)
                     ]);
                 }
             }
