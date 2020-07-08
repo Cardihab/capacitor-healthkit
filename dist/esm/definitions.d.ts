@@ -1,0 +1,9 @@
+export interface CapacitorHealthkitPlugin {
+    requestAuthorization(options: any): Promise<any>;
+    isAvailable(): Promise<any>;
+    queryHKitSampleType(options: any): Promise<any>;
+    queryAggregatedDailySampleType(options: any): Promise<any>;
+    multipleQueryHKitSampleType(): Promise<any>;
+    isEditionAuthorized(): Promise<any>;
+    multipleIsEditionAuthorized(): Promise<any>;
+}

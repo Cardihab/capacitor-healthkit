@@ -39,4 +39,8 @@ export class CapacitorHealthkitWeb
   async multipleIsEditionAuthorized(): Promise<void> {
     throw this.unimplemented('Not implemented on web.');
   }
+
+  async queryAggregatedDailySampleType(_options: any): Promise<any> {
+    throw this.unimplemented('Not implemented on web.');
+  }
 }

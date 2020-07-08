@@ -29,6 +29,13 @@ export interface CapacitorHealthkitPlugin {
    * @param queryOptions defines the sampletypes for which you need to check for writing permission.
    */
   multipleIsEditionAuthorized(queryOptions: MultipleEditionQuery): Promise<void>;
+
+  /**
+   * 
+   * @param options defines the sample type and the timeframe which shall be queried.
+   */
+  queryAggregatedDailySampleType(options: any): Promise<any>;
+
 }
 
 /**
