@@ -30,6 +30,11 @@ export class CapacitorHealthkitWeb extends WebPlugin {
             throw new Error("Method not implemented.");
         });
     }
+    queryAggregatedDailySampleType() {
+        return __awaiter(this, void 0, void 0, function* () {
+            throw new Error("Method not implemented.");
+        });
+    }
     multipleQueryHKitSampleType() {
         return __awaiter(this, void 0, void 0, function* () {
             throw new Error("Method not implemented.");
