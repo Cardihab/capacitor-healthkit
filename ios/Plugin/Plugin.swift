@@ -289,6 +289,105 @@ public class CapacitorHealthkit: CAPPlugin {
         }
     }
 
+    @objc func queryAggregatedDailySampleType(_ call: CAPPluginCall) {
+
+        let calendar = NSCalendar.current
+
+        let interval = NSDateComponents()
+        interval.day = 1
+
+        var anchorComponents = calendar.dateComponents([.day, .month, .year, .weekday], from: NSDate() as Date)
+        anchorComponents.hour = 9
+
+        guard let _sampleName = call.options["sampleName"] as? String else {
+            call.reject("Must provide sampleName")
+            return
+        }
+        guard let _startDate = call.options["startDate"] as? String else {
+            call.reject("Must provide startDate")
+            return
+        }
+        guard let _endDate = call.options["endDate"] as? Date else {
+            call.reject("Must provide endDate")
+            return
+        }
+        guard let _limit = call.options["limit"] as? Int else {
+            call.reject("Must provide limit")
+            return
+        }
+
+        var limit: Int = 0;
+
+        if (_limit == 0) {
+            limit = HKObjectQueryNoLimit;
+        } else {
+            limit = _limit;
+        }
+
+        let dateFormatter = DateFormatter();
+        dateFormatter.dateFormat = "yyyy/MM/dd";
+
+        let startDate = dateFormatter.date(from: _startDate);
+
+        var _sampleType: HKQuantityTypeIdentifier? = nil;
+
+        switch _sampleName {
+            case "stepCount":
+                _sampleType = HKQuantityTypeIdentifier.stepCount;
+        default:
+            print("cannot match sample name");
+            call.reject("Error in sample name");
+            return
+        }
+
+        guard let anchorDate = calendar.date(from: anchorComponents) else {
+            fatalError("*** unable to create a valid date from the given components ***")
+        }
+
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: _sampleType!) else {
+            fatalError("*** Unable to create a step count type ***")
+        }
+
+        let query = HKStatisticsCollectionQuery(quantityType: quantityType,
+                                        quantitySamplePredicate: nil,
+                                        options: .cumulativeSum,
+                                        anchorDate: anchorDate,
+                                        intervalComponents: interval as DateComponents)
+
+        query.initialResultsHandler = {
+            query, results, error in
+
+            guard let statsCollection = results else {
+                // Perform proper error handling here
+                fatalError("*** An error occurred while calculating the statistics: \(error?.localizedDescription) ***")
+            }
+
+            var output: [[String: Any]] = []
+            let iso8601DateFormatter = ISO8601DateFormatter()
+            iso8601DateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            statsCollection.enumerateStatistics(from: startDate!, to: _endDate) { [unowned self] statistics, stop in
+
+                if let quantity = statistics.sumQuantity() {
+                    let date = statistics.startDate
+                    let value = quantity.doubleValue(for: HKUnit.count())
+
+                    // Call a custom method to plot each data point.
+                    output.append([
+                        "count": value,
+                        "date": iso8601DateFormatter.string(from: date)
+                    ]);
+                }
+            }
+            call.resolve([
+                "resultData": output
+            ])
+        }
+
+        healthStore.execute(query)
+
+
+    }
+
     enum HKSampleError: Error {
         case sleepRequestFailed
         case workoutRequestFailed
