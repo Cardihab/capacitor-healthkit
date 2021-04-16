@@ -64,6 +64,10 @@ public class CapacitorHealthkit: CAPPlugin {
                 sampleType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!;
             case "workoutType":
                 sampleType = HKWorkoutType.workoutType();
+            case "heartRate":
+                sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!;
+            case "bloodPressure":
+                sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
         default:
             print("cannot match sample name");
             call.reject("Error in sample name");
@@ -116,6 +120,10 @@ public class CapacitorHealthkit: CAPPlugin {
                            sampleType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!;
                        case "workoutType":
                            sampleType = HKWorkoutType.workoutType();
+                       case "heartRate":
+                           sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate);
+                       case "bloodPressure":
+                           sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
                    default:
                        print("cannot match sample name");
                        call.reject("Error in sample name");
@@ -210,6 +218,14 @@ public class CapacitorHealthkit: CAPPlugin {
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceCycling)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceWalkingRunning)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceCycling)!);
+                case "heartRate":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
+                case "bloodPressure":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
                 default:
                     print("no match in case");
                 }
@@ -234,6 +250,11 @@ public class CapacitorHealthkit: CAPPlugin {
                 case "distance":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceWalkingRunning)!);
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceCycling)!);
+                case "heartRate":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
+                case "bloodPressure":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
                 default:
                     print("no match in case");
                 }
@@ -258,6 +279,11 @@ public class CapacitorHealthkit: CAPPlugin {
                 case "distance":
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceWalkingRunning)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceCycling)!);
+                case "heartRate":
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
+                case "bloodPressure":
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
                 default:
                     print("no match in case");
                 }
@@ -363,7 +389,7 @@ public class CapacitorHealthkit: CAPPlugin {
 
                     // Call a custom method to plot each data point.
                     output.append([
-                        "count": value,
+                        "value": value,
                         "date": iso8601DateFormatter.string(from: date!)
                     ]);
                 }
@@ -435,6 +461,10 @@ public class CapacitorHealthkit: CAPPlugin {
                 _sampleType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!;
             case "workoutType":
                 _sampleType = HKWorkoutType.workoutType();
+            case "heartRate":
+                _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!;
+            case "bloodPressure":
+                _sampleType = HKQuantityType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure);
         default:
             print("cannot match sample name");
             call.reject("Error in sample name");
@@ -642,6 +672,55 @@ public class CapacitorHealthkit: CAPPlugin {
                  ])
             }
             healthStore.execute(query2)
+        } else if (_sampleName == "bloodPressure") {
+            /*
+
+             ** QUERY FOR BP DATA
+
+            */
+
+            let queryBp = HKSampleQuery(sampleType: _sampleType!, predicate: _predicate, limit: limit, sortDescriptors: nil) {
+                query, results, error in
+                guard let result = results as? [HKCorrelation] else {
+                    call.reject("Could not query data");
+                    return
+                }
+
+                var output: [[String: Any]] = []
+                let unitName: String = "mmHg";
+
+                if let dataList = results as? [HKCorrelation] {
+                    for data in dataList {
+                        if let systolic = data.objects(for: HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!).first as? HKQuantitySample,
+                           let diastolic = data.objects(for: HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!).first as? HKQuantitySample {
+
+                            let systolicValue = systolic.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
+                            let diastolicValue = diastolic.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
+
+                            output.append([
+                                "uuid": data.uuid.uuidString,
+                                "value": [
+                                    "systolic": systolicValue,
+                                    "diastolic": diastolicValue
+                                ],
+                                "unitName": unitName,
+                                "startDate": ISO8601DateFormatter().string(from: data.startDate),
+                                "endDate": ISO8601DateFormatter().string(from: data.endDate),
+                                "source": data.sourceRevision.source.name,
+                                "sourceBundleId": data.sourceRevision.source.bundleIdentifier
+                            ])
+
+                        }
+                    }
+                }
+
+                call.resolve([
+                    "countReturn": result.count,
+                    "resultData": output
+                ])
+            }
+
+            healthStore.execute(queryBp);
         } else {
             
             /*
@@ -653,8 +732,8 @@ public class CapacitorHealthkit: CAPPlugin {
             let query3 = HKSampleQuery(sampleType: _sampleType!, predicate: _predicate, limit: limit, sortDescriptors: nil) {
                 query, results, error in
                 
-                // print(results);
-                // print("-- -- --");
+                    // print(results);`
+                    // print("-- -- --");`
                 
                 
                 // Je mets quantity ici pour tester
@@ -669,6 +748,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     
                     var unit: HKUnit?
                     var unitName: String?
+                    let heartRateUnit: HKUnit = HKUnit.count().unitDivided(by: HKUnit.minute());
                     
                     if r.quantityType.is(compatibleWith: HKUnit.meter()) {
                         unit = HKUnit.meter()
@@ -682,6 +762,9 @@ public class CapacitorHealthkit: CAPPlugin {
                     } else if r.quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
                         unit = HKUnit.kilocalorie()
                         unitName = "kilocalorie"
+                    } else if r.quantityType.is(compatibleWith: heartRateUnit) {
+                        unit = heartRateUnit;
+                        unitName = "bpm";
                     } else {
                         print("Error: unknown unit type")
                     }
@@ -1301,6 +1384,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     
                     var unit: HKUnit?
                     var unitName: String?
+                    let heartRateUnit: HKUnit = HKUnit.count().unitDivided(by: HKUnit.minute());
                     
                     if r.quantityType.is(compatibleWith: HKUnit.meter()) {
                         unit = HKUnit.meter()
@@ -1314,6 +1398,9 @@ public class CapacitorHealthkit: CAPPlugin {
                     } else if r.quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
                         unit = HKUnit.kilocalorie()
                         unitName = "kilocalorie"
+                    } else if r.quantityType.is(compatibleWith: heartRateUnit) {
+                        unit = heartRateUnit;
+                        unitName = "bpm";
                     } else {
                         print("Error: unknown unit type")
                     }
