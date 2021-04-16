@@ -27,6 +27,10 @@ public class CapacitorHealthkit: CAPPlugin {
             return HKObjectType.categoryType(forIdentifier: HKCategoryTypeIdentifier.sleepAnalysis)!
         case "workoutType":
             return HKWorkoutType.workoutType()
+        case "heartRate":
+            return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!;
+        case "bloodPressure":
+            return HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
         default:
             return nil
         }
@@ -53,6 +57,10 @@ public class CapacitorHealthkit: CAPPlugin {
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceCycling)!)
             case "bloodGlucose":
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose)!)
+            case "heartRate":
+                types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
+            case "bloodPressure":
+                types.insert(HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!);
             default:
                 print("no match in case: " + item)
             }
@@ -373,7 +381,7 @@ public class CapacitorHealthkit: CAPPlugin {
 
                     // Call a custom method to plot each data point.
                     output.append([
-                        "count": value,
+                        "value": value,
                         "date": iso8601DateFormatter.string(from: date!)
                     ]);
                 }
@@ -514,6 +522,30 @@ public class CapacitorHealthkit: CAPPlugin {
                     "totalFlightsClimbed": TFCData!, // count
                     "totalSwimmingStrokeCount": TSSCData!, // count
                 ])
+            } else if sampleName == "bloodPressure" {
+                let unitName: String = "mmHg";
+                guard let sample = result as? HKCorrelation else {
+                    return nil
+                }
+                if let systolic = sample.objects(for: HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!).first as? HKQuantitySample,
+                  let diastolic = sample.objects(for: HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!).first as? HKQuantitySample {
+
+                    let systolicValue = systolic.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
+                    let diastolicValue = diastolic.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
+
+                    output.append([
+                        "uuid": data.uuid.uuidString,
+                        "value": [
+                            "systolic": systolicValue,
+                            "diastolic": diastolicValue
+                        ],
+                        "unitName": unitName,
+                        "startDate": ISO8601DateFormatter().string(from: data.startDate),
+                        "endDate": ISO8601DateFormatter().string(from: data.endDate),
+                        "source": data.sourceRevision.source.name,
+                        "sourceBundleId": data.sourceRevision.source.bundleIdentifier
+                    ])
+                }
             } else {
                 guard let sample = result as? HKQuantitySample else {
                     return nil
@@ -536,6 +568,9 @@ public class CapacitorHealthkit: CAPPlugin {
                 } else if sample.quantityType.is(compatibleWith: HKUnit.moleUnit(withMolarMass: HKUnitMolarMassBloodGlucose).unitDivided(by: HKUnit.literUnit(with: .kilo))) {
                     unit = HKUnit.moleUnit(withMolarMass: HKUnitMolarMassBloodGlucose).unitDivided(by: HKUnit.literUnit(with: .kilo))
                     unitName = "mmol/L"
+                } else if sample.quantityType.is(compatibleWith: HKUnit.count().unitDivided(by: HKUnit.minute())) {
+                    unit = HKUnit.count().unitDivided(by: HKUnit.minute());
+                    unitName = "bpm"
                 } else {
                     print("Error: unknown unit type")
                 }
