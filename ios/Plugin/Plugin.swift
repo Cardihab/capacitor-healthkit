@@ -31,6 +31,8 @@ public class CapacitorHealthkit: CAPPlugin {
             return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!;
         case "bloodPressure":
             return HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
+        case "weight":
+            return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!;
         default:
             return nil
         }
@@ -61,6 +63,8 @@ public class CapacitorHealthkit: CAPPlugin {
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
             case "bloodPressure":
                 types.insert(HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!);
+            case "weight":
+                types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!);
             default:
                 print("no match in case: " + item)
             }
@@ -565,6 +569,9 @@ public class CapacitorHealthkit: CAPPlugin {
                 } else if sample.quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
                     unit = HKUnit.kilocalorie()
                     unitName = "kilocalorie"
+                } else if sample.quantityType.is(compatibleWith: HKUnit.gramUnit(with: .kilo)) {
+                    unit = HKUnit.gramUnit(with: .kilo)
+                    unitName = "kilogram"
                 } else if sample.quantityType.is(compatibleWith: HKUnit.moleUnit(withMolarMass: HKUnitMolarMassBloodGlucose).unitDivided(by: HKUnit.literUnit(with: .kilo))) {
                     unit = HKUnit.moleUnit(withMolarMass: HKUnitMolarMassBloodGlucose).unitDivided(by: HKUnit.literUnit(with: .kilo))
                     unitName = "mmol/L"
