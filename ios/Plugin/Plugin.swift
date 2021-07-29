@@ -125,7 +125,7 @@ public class CapacitorHealthkit: CAPPlugin {
                        case "heartRate":
                            sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate);
                       case "weight":
-                           sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass;
+                            sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass);
                        case "bloodPressure":
                            sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
                    default:
