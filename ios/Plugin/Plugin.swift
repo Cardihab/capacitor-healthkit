@@ -66,6 +66,8 @@ public class CapacitorHealthkit: CAPPlugin {
                 sampleType = HKWorkoutType.workoutType();
             case "heartRate":
                 sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!;
+            case "weight":
+                sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!;
             case "bloodPressure":
                 sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
         default:
@@ -122,6 +124,8 @@ public class CapacitorHealthkit: CAPPlugin {
                            sampleType = HKWorkoutType.workoutType();
                        case "heartRate":
                            sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate);
+                      case "weight":
+                           sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass;
                        case "bloodPressure":
                            sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
                    default:
@@ -221,6 +225,9 @@ public class CapacitorHealthkit: CAPPlugin {
                 case "heartRate":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
+                case "weight":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!);
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!);
                 case "bloodPressure":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
@@ -252,6 +259,8 @@ public class CapacitorHealthkit: CAPPlugin {
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceCycling)!);
                 case "heartRate":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
+                case "weight":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!);
                 case "bloodPressure":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
@@ -281,6 +290,8 @@ public class CapacitorHealthkit: CAPPlugin {
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceCycling)!);
                 case "heartRate":
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
+                case "weight":
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!);
                 case "bloodPressure":
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
@@ -463,6 +474,8 @@ public class CapacitorHealthkit: CAPPlugin {
                 _sampleType = HKWorkoutType.workoutType();
             case "heartRate":
                 _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!;
+            case "weight":
+                _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!;
             case "bloodPressure":
                 _sampleType = HKQuantityType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure);
         default:
@@ -762,6 +775,9 @@ public class CapacitorHealthkit: CAPPlugin {
                     } else if r.quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
                         unit = HKUnit.kilocalorie()
                         unitName = "kilocalorie"
+                    } else if r.quantityType.is(compatibleWith: HKUnit.gramUnit(with: .kilo)) {
+                        unit = HKUnit.gramUnit(with: .kilo)
+                        unitName = "kilogram"
                     } else if r.quantityType.is(compatibleWith: heartRateUnit) {
                         unit = heartRateUnit;
                         unitName = "bpm";
@@ -1398,6 +1414,9 @@ public class CapacitorHealthkit: CAPPlugin {
                     } else if r.quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
                         unit = HKUnit.kilocalorie()
                         unitName = "kilocalorie"
+                    } else if r.quantityType.is(compatibleWith: HKUnit.gramUnit(with: .kilo)) {
+                        unit = HKUnit.gramUnit(with: .kilo)
+                        unitName = "kilogram"
                     } else if r.quantityType.is(compatibleWith: heartRateUnit) {
                         unit = heartRateUnit;
                         unitName = "bpm";
