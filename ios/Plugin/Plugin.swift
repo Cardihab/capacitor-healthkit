@@ -440,7 +440,17 @@ public class CapacitorHealthkit: CAPPlugin {
 
     func generateOutput(sampleName: String, results: [HKSample]?) -> [[String: Any]]? {
         var output: [[String: Any]] = []
+        var device: [[String: Any]];
         for result in results! {
+             if (result.device != nil) {
+                device = [
+                    "deviceIdentifier": r.device?.udiDeviceIdentifier,
+                    "deviceName": r.device?.name,
+                    "manufacturer": r.device?.manufacturer,
+                    "model": r.device?.model,
+                    "version": r.device?.firmwareVersion
+                ];
+            }
             if sampleName == "sleepAnalysis" {
                 guard let sample = result as? HKCategorySample else {
                     return nil
@@ -459,6 +469,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     "sleepState": sleepState,
                     "source": sample.sourceRevision.source.name,
                     "sourceBundleId": sample.sourceRevision.source.bundleIdentifier,
+                    "device": device,
                 ]
                 output.append(constructedSample)
             } else if sampleName == "workoutType" {
@@ -525,6 +536,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     "totalDistance": TDData!, // meter
                     "totalFlightsClimbed": TFCData!, // count
                     "totalSwimmingStrokeCount": TSSCData!, // count
+                    "device": device,
                 ])
             } else if sampleName == "bloodPressure" {
                 let unitName: String = "mmHg";
@@ -547,7 +559,8 @@ public class CapacitorHealthkit: CAPPlugin {
                         "startDate": ISO8601DateFormatter().string(from: data.startDate),
                         "endDate": ISO8601DateFormatter().string(from: data.endDate),
                         "source": data.sourceRevision.source.name,
-                        "sourceBundleId": data.sourceRevision.source.bundleIdentifier
+                        "sourceBundleId": data.sourceRevision.source.bundleIdentifier,
+                        "device": device,
                     ])
                 }
             } else {
@@ -599,6 +612,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     "duration": quantityHoursBetweenDates,
                     "source": sample.sourceRevision.source.name,
                     "sourceBundleId": sample.sourceRevision.source.bundleIdentifier,
+                    "device": device,
                 ])
             }
         }
