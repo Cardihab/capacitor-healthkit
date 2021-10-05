@@ -532,16 +532,25 @@ public class CapacitorHealthkit: CAPPlugin {
                         let sleepHoursBetweenDates = sleepInterval / sleepSecondsInAnHour;
                         // print("sleepDuration:")
                         // print(sleepHoursBetweenDates)
-                    
-                    
-                    output.append([
+                    var healthData = [
                         "uuid": r.uuid.uuidString,
                         "startDate": ISO8601DateFormatter().string(from: r.startDate),
                         "endDate": ISO8601DateFormatter().string(from: r.endDate),
                         "duration": sleepHoursBetweenDates,
                         "source": r.sourceRevision.source.name,
                         "sourceBundleId": r.sourceRevision.source.bundleIdentifier
-                    ])
+                    ] as [String : Any];
+
+                    if (r.device != nil) {
+                        healthData["device"] = [
+                            "deviceIdentifier": r.device?.udiDeviceIdentifier,
+                            "deviceName": r.device?.name,
+                            "manufacturer": r.device?.manufacturer,
+                            "model": r.device?.model,
+                            "version": r.device?.firmwareVersion
+                        ];
+                    }
+                    output.append(healthData);
                 }
                 
                 
@@ -660,9 +669,7 @@ public class CapacitorHealthkit: CAPPlugin {
                         let workoutHoursBetweenDates = workoutInterval / workoutSecondsInAnHour;
                         // print("workout duration:")
                         // print(workoutHoursBetweenDates)
-                    
-                    
-                     output.append([
+                    var healthData = [
                         "uuid": r.uuid.uuidString,
                          "startDate": ISO8601DateFormatter().string(from: r.startDate),
                          "endDate": ISO8601DateFormatter().string(from: r.endDate),
@@ -675,7 +682,19 @@ public class CapacitorHealthkit: CAPPlugin {
                          "totalDistance": TDData!, // meter
                          "totalFlightsClimbed": TFCData!, // count
                          "totalSwimmingStrokeCount": TSSCData! // count
-                     ])
+                    ] as [String : Any];
+
+                    if (r.device != nil) {
+                        healthData["device"] = [
+                            "deviceIdentifier": r.device?.udiDeviceIdentifier,
+                            "deviceName": r.device?.name,
+                            "manufacturer": r.device?.manufacturer,
+                            "model": r.device?.model,
+                            "version": r.device?.firmwareVersion
+                        ];
+                    }
+
+                     output.append(healthData);
                  }
                 
                  call.resolve([
@@ -710,7 +729,7 @@ public class CapacitorHealthkit: CAPPlugin {
                             let systolicValue = systolic.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
                             let diastolicValue = diastolic.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
 
-                            output.append([
+                            var healthData = [
                                 "uuid": data.uuid.uuidString,
                                 "value": [
                                     "systolic": systolicValue,
@@ -721,7 +740,18 @@ public class CapacitorHealthkit: CAPPlugin {
                                 "endDate": ISO8601DateFormatter().string(from: data.endDate),
                                 "source": data.sourceRevision.source.name,
                                 "sourceBundleId": data.sourceRevision.source.bundleIdentifier
-                            ])
+                            ] as [String : Any];
+
+                            if (data.device != nil) {
+                                healthData["device"] = [
+                                    "deviceIdentifier": data.device?.udiDeviceIdentifier,
+                                    "deviceName": data.device?.name,
+                                    "manufacturer": data.device?.manufacturer,
+                                    "model": data.device?.model,
+                                    "version": data.device?.firmwareVersion
+                                ];
+                            }
+                            output.append(healthData);
 
                         }
                     }
