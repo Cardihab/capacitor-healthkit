@@ -33,6 +33,13 @@ public class CapacitorHealthkit: CAPPlugin {
             return HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
         case "weight":
             return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!;
+        case "vo2Max":
+            return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!;
+        case "sixMinuteWalkTestDistance":
+            if #available(iOS 14.0, *) {
+                return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!;
+            }
+            return nil
         default:
             return nil
         }
@@ -65,6 +72,14 @@ public class CapacitorHealthkit: CAPPlugin {
                 types.insert(HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!);
             case "weight":
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!);
+             case "vo2Max":
+                types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!);
+            case "sixMinuteWalkTestDistance":
+                if #available(iOS 14.0, *) {
+                    types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!);
+                } else {
+                    print("no match in case: " + item)
+                }
             default:
                 print("no match in case: " + item)
             }
@@ -591,6 +606,9 @@ public class CapacitorHealthkit: CAPPlugin {
                 } else if sample.quantityType.is(compatibleWith: HKUnit.count().unitDivided(by: HKUnit.minute())) {
                     unit = HKUnit.count().unitDivided(by: HKUnit.minute());
                     unitName = "bpm"
+                } else if sample.quantityType.is(compatibleWith: HKUnit(from: "ml/(kg*min)")) {
+                    unit = HKUnit(from: "ml/(kg*min)");
+                    unitName = "ml/(kg*min)";
                 } else {
                     print("Error: unknown unit type")
                 }
