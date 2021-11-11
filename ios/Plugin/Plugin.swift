@@ -70,6 +70,16 @@ public class CapacitorHealthkit: CAPPlugin {
                 sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!;
             case "bloodPressure":
                 sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
+            case "vo2Max":
+                sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!;
+            case "sixMinuteWalkTestDistance":
+                if #available(iOS 14.0, *) {
+                    sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!
+                } else {
+                    call.resolve()
+                };
+            case "mindfulness":
+                sampleType = HKObjectType.categoryType(forIdentifier: .mindfulSession)!;
         default:
             print("cannot match sample name");
             call.reject("Error in sample name");
@@ -128,6 +138,16 @@ public class CapacitorHealthkit: CAPPlugin {
                             sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass);
                        case "bloodPressure":
                            sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
+                       case "vo2Max":
+                           sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!;
+                       case "sixMinuteWalkTestDistance":
+                        if #available(iOS 14.0, *) {
+                            sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!
+                        } else {
+                            call.resolve()
+                        };
+                       case "mindfulness":
+                           sampleType = HKObjectType.categoryType(forIdentifier: .mindfulSession)!;
                    default:
                        print("cannot match sample name");
                        call.reject("Error in sample name");
@@ -208,9 +228,9 @@ public class CapacitorHealthkit: CAPPlugin {
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleExerciseTime)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleExerciseTime)!);
                 case "activity":
-                    writeTypes.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!);
+//                    writeTypes.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!);
                     writeTypes.insert(HKWorkoutType.workoutType());
-                    readTypes.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!);
+//                    readTypes.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!);
                     readTypes.insert(HKWorkoutType.workoutType());
                 case "calories":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.activeEnergyBurned)!);
@@ -233,6 +253,17 @@ public class CapacitorHealthkit: CAPPlugin {
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
+                case "vo2Max":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!)
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!)
+                case "sixMinuteWalkTestDistance":
+                    if #available(iOS 14.0, *) {
+                        writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!)
+                        readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!)
+                    }
+                case "mindfulness":
+                    writeTypes.insert(HKObjectType.categoryType(forIdentifier: .mindfulSession)!);
+                    readTypes.insert(HKObjectType.categoryType(forIdentifier: .mindfulSession)!);
                 default:
                     print("no match in case");
                 }
@@ -249,7 +280,7 @@ public class CapacitorHealthkit: CAPPlugin {
                 case "duration":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleExerciseTime)!);
                 case "activity":
-                    writeTypes.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!);
+//                    writeTypes.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!);
                     writeTypes.insert(HKWorkoutType.workoutType());
                 case "calories":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.activeEnergyBurned)!);
@@ -264,6 +295,14 @@ public class CapacitorHealthkit: CAPPlugin {
                 case "bloodPressure":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
+                case "vo2Max":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!)
+                case "sixMinuteWalkTestDistance":
+                    if #available(iOS 14.0, *) {
+                        writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!)
+                    }
+                case "mindfulness":
+                    writeTypes.insert(HKObjectType.categoryType(forIdentifier: .mindfulSession)!);
                 default:
                     print("no match in case");
                 }
@@ -280,7 +319,7 @@ public class CapacitorHealthkit: CAPPlugin {
                 case "duration":
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleExerciseTime)!);
                 case "activity":
-                    readTypes.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!);
+//                    readTypes.insert(HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!);
                     readTypes.insert(HKWorkoutType.workoutType());
                 case "calories":
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.activeEnergyBurned)!);
@@ -295,6 +334,14 @@ public class CapacitorHealthkit: CAPPlugin {
                 case "bloodPressure":
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
+                case "vo2Max":
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!)
+                case "sixMinuteWalkTestDistance":
+                    if #available(iOS 14.0, *) {
+                        readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!)
+                    }
+                case "mindfulness":
+                    readTypes.insert(HKObjectType.categoryType(forIdentifier: .mindfulSession)!);
                 default:
                     print("no match in case");
                 }
@@ -445,8 +492,9 @@ public class CapacitorHealthkit: CAPPlugin {
         
         let dateFormatter = DateFormatter();
         dateFormatter.dateFormat = "yyyy/MM/dd";
+        dateFormatter.timeZone = TimeZone.current
         
-        let startDate = dateFormatter.date(from: _startDate);
+        let startDate = dateFormatter.date(from: _startDate)!;
         
     
         let _predicate = HKQuery.predicateForSamples(withStart: startDate, end: _endDate, options: HKQueryOptions.strictStartDate);
@@ -478,6 +526,19 @@ public class CapacitorHealthkit: CAPPlugin {
                 _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!;
             case "bloodPressure":
                 _sampleType = HKQuantityType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure);
+            case "vo2Max":
+                _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!;
+            case "sixMinuteWalkTestDistance":
+                if #available(iOS 14.0, *) {
+                    _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!
+                } else {
+                    call.resolve([
+                        "countReturn": 0,
+                        "resultData": []
+                    ])
+                };
+            case "mindfulness":
+                _sampleType = HKObjectType.categoryType(forIdentifier: .mindfulSession)!;
         default:
             print("cannot match sample name");
             call.reject("Error in sample name");
@@ -562,7 +623,51 @@ public class CapacitorHealthkit: CAPPlugin {
                 ])
             }
             healthStore.execute(query1)
-            
+        } else if (_sampleName == "mindfulness") {
+
+            let query1 = HKSampleQuery(sampleType: _sampleType!, predicate: _predicate, limit: limit, sortDescriptors: nil) {
+             query, results, error in
+                 guard let result = results else {
+                     call.reject("Could not query data");
+                     return
+                 }
+
+                var output: [[String: Any]] = []
+
+                for r in result {
+                    let mindfulnessSD = r.startDate as NSDate
+                    let mindfulnessED = r.endDate as NSDate
+                    let mindfulnessInterval = mindfulnessED.timeIntervalSince(mindfulnessSD as Date)
+                    let mindfulnessMinutes = mindfulnessInterval / 60;
+                    var healthData = [
+                        "uuid": r.uuid.uuidString,
+                        "startDate": ISO8601DateFormatter().string(from: r.startDate),
+                        "endDate": ISO8601DateFormatter().string(from: r.endDate),
+                        "value": mindfulnessMinutes,
+                        "unitName": "minute",
+                        "source": r.sourceRevision.source.name,
+                        "sourceBundleId": r.sourceRevision.source.bundleIdentifier
+                    ] as [String : Any];
+
+                    if (r.device != nil) {
+                        healthData["device"] = [
+                            "deviceIdentifier": r.device?.udiDeviceIdentifier,
+                            "deviceName": r.device?.name,
+                            "manufacturer": r.device?.manufacturer,
+                            "model": r.device?.model,
+                            "version": r.device?.firmwareVersion
+                        ];
+                    }
+                    output.append(healthData);
+                }
+q
+                call.resolve([
+                    "countReturn": result.count,
+                    "resultData": output
+
+                ])
+            }
+            healthStore.execute(query1)
         } else if (_sampleName == "workoutType") {
             
             /*
@@ -811,6 +916,9 @@ public class CapacitorHealthkit: CAPPlugin {
                     } else if r.quantityType.is(compatibleWith: heartRateUnit) {
                         unit = heartRateUnit;
                         unitName = "bpm";
+                    } else if r.quantityType.is(compatibleWith: HKUnit(from: "ml/(kg*min)")) {
+                        unit = HKUnit(from: "ml/(kg*min)");
+                        unitName = "ml/(kg*min)";
                     } else {
                         print("Error: unknown unit type")
                     }
