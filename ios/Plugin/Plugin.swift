@@ -40,6 +40,8 @@ public class CapacitorHealthkit: CAPPlugin {
                 return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!;
             }
             return nil
+        case "mindfulness":
+            return HKObjectType.categoryType(forIdentifier: .mindfulSession)!;
         default:
             return nil
         }
@@ -80,6 +82,8 @@ public class CapacitorHealthkit: CAPPlugin {
                 } else {
                     print("no match in case: " + item)
                 }
+            case "mindfulness":
+                types.insert(HKObjectType.categoryType(forIdentifier: .mindfulSession)!);
             default:
                 print("no match in case: " + item)
             }
