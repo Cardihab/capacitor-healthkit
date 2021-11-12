@@ -660,7 +660,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     }
                     output.append(healthData);
                 }
-q
+
                 call.resolve([
                     "countReturn": result.count,
                     "resultData": output
