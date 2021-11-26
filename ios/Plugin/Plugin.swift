@@ -72,6 +72,8 @@ public class CapacitorHealthkit: CAPPlugin {
                 sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
             case "vo2Max":
                 sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!;
+            case "bloodGlucose":
+                sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose)!;
             case "sixMinuteWalkTestDistance":
                 if #available(iOS 14.0, *) {
                     sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!
@@ -140,6 +142,8 @@ public class CapacitorHealthkit: CAPPlugin {
                            sampleType = HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!;
                        case "vo2Max":
                            sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!;
+                       case "bloodGlucose":
+                           sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose)!;
                        case "sixMinuteWalkTestDistance":
                         if #available(iOS 14.0, *) {
                             sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!
@@ -256,6 +260,9 @@ public class CapacitorHealthkit: CAPPlugin {
                 case "vo2Max":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!)
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!)
+                case "bloodGlucose":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose)!)
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose)!)
                 case "sixMinuteWalkTestDistance":
                     if #available(iOS 14.0, *) {
                         writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!)
@@ -297,6 +304,8 @@ public class CapacitorHealthkit: CAPPlugin {
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
                 case "vo2Max":
                     writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!)
+                case "bloodGlucose":
+                    writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose)!)
                 case "sixMinuteWalkTestDistance":
                     if #available(iOS 14.0, *) {
                         writeTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!)
@@ -336,6 +345,8 @@ public class CapacitorHealthkit: CAPPlugin {
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
                 case "vo2Max":
                     readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!)
+                case "bloodGlucose":
+                    readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose)!)
                 case "sixMinuteWalkTestDistance":
                     if #available(iOS 14.0, *) {
                         readTypes.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!)
@@ -528,6 +539,8 @@ public class CapacitorHealthkit: CAPPlugin {
                 _sampleType = HKQuantityType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure);
             case "vo2Max":
                 _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!;
+            case "bloodGlucose":
+                _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose)!;
             case "sixMinuteWalkTestDistance":
                 if #available(iOS 14.0, *) {
                     _sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.sixMinuteWalkTestDistance)!
@@ -897,6 +910,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     var unit: HKUnit?
                     var unitName: String?
                     let heartRateUnit: HKUnit = HKUnit.count().unitDivided(by: HKUnit.minute());
+                    let bloodGlucoseUnit: HKUnit = HKUnit.moleUnit(with: .milli, molarMass: HKUnitMolarMassBloodGlucose).unitDivided(by: HKUnit.liter())
                     
                     if r.quantityType.is(compatibleWith: HKUnit.meter()) {
                         unit = HKUnit.meter()
@@ -916,6 +930,9 @@ public class CapacitorHealthkit: CAPPlugin {
                     } else if r.quantityType.is(compatibleWith: heartRateUnit) {
                         unit = heartRateUnit;
                         unitName = "bpm";
+                    } else if r.quantityType.is(compatibleWith: bloodGlucoseUnit) {
+                        unit = bloodGlucoseUnit;
+                        unitName = "mmol";
                     } else if r.quantityType.is(compatibleWith: HKUnit(from: "ml/(kg*min)")) {
                         unit = HKUnit(from: "ml/(kg*min)");
                         unitName = "ml/(kg*min)";
