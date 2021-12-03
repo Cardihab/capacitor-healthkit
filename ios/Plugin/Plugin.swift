@@ -795,7 +795,7 @@ public class CapacitorHealthkit: CAPPlugin {
                          "source": r.sourceRevision.source.name,
                          "sourceBundleId": r.sourceRevision.source.bundleIdentifier,
                          "workoutActivityId": workoutActivityTypeValue,
-                         "workoutActivityName": self.returnWorkoutActivityTypeValueDictionnary(number: workoutActivityTypeValue),
+                         "workoutActivityName": r.workoutActivityType.name,
                          "totalEnergyBurned": TEBData!, // kilocalorie
                          "totalDistance": TDData!, // meter
                          "totalFlightsClimbed": TFCData!, // count
@@ -984,192 +984,6 @@ public class CapacitorHealthkit: CAPPlugin {
         }
         
     }
-    
-    
-    
-    func returnWorkoutActivityTypeValueDictionnary(number: UInt) -> String {
-
-        switch number {
-        case 1:
-            return "americanFootball"
-
-        case 2:
-            return "archery"
-
-        case 3:
-            return "australianFootball"
-
-        case 4:
-            return "badminton"
-
-        case 5:
-            return "baseball"
-
-        case 6:
-            return "basketball"
-
-        case 7:
-            return "bowling"
-
-        case 8: // See also HKWorkoutActivityTypeKickboxing.
-            return "boxing"
-
-        case 9:
-            return "climbing"
-            
-        case 10:
-            return "cricket"
-            
-        case 11: // Any mix of cardio and/or strength training. See also HKWorkoutActivityTypeCoreTraining and HKWorkoutActivityTypeFlexibility.
-            return "crossTraining"
-            
-        case 12:
-            return "curling"
-
-        case 13:
-            return "cycling"
-
-        case 14:
-            return "dance"
-
-        case 15: // This enum remains available to access older data.
-            return "danceInspiredTraining"
-
-        case 16:
-            return "elliptical"
-
-        case 17: // Polo, Horse Racing, Horse Riding, etc.
-            return "equestrianSports"
-
-        case 18:
-            return "fencing"
-
-        case 19:
-            return "fishing"
-
-        case 20: // Primarily free weights and/or body weight and/or accessories
-            return "functionalStrengthTraining"
-
-        case 21:
-            return "golf"
-
-        case 22:
-            return "gymnastics"
-
-        case 23:
-            return "handball"
-
-        case 24:
-            return "hiking"
-
-        case 25: // Ice Hockey, Field Hockey, etc.
-            return "hockey"
-
-        case 26:
-            return "hunting"
-
-        case 27:
-            return "lacrosse"
-
-        case 28:
-            return "martialArts"
-
-        case 29: // Qigong, meditation, etc.
-            return "mindAndBody"
-
-
-        case 30: // This enum remains available to access older data.
-            return "mixedMetabolicCardioTraining"
-
-        case 31: // Canoeing, Kayaking, Outrigger, Stand Up Paddle Board, etc.
-            return "paddleSports"
-
-        case 32: // Dodge Ball, Hopscotch, Tetherball, Jungle Gym, etc.
-            return "play"
-
-        case 33: // Foam rolling, stretching, etc.
-            return "preparationAndRecovery"
-
-        case 34:
-            return "racquetball"
-
-        case 35:
-            return "rowing"
-
-        case 36:
-            return "rugby"
-
-        case 37:
-            return "running"
-
-        case 38:
-            return "sailing"
-
-        case 39: // Ice Skating, Speed Skating, Inline Skating, Skateboarding, etc.
-            return "skatingSports"
-
-        case 40: // Sledding, Snowmobiling, Building a Snowman, etc. See also HKWorkoutActivityTypeCrossCountrySkiing, HKWorkoutActivityTypeSnowboarding, and HKWorkoutActivityTypeDownhillSkiing.
-            return "snowSports"
-
-        case 41:
-            return "soccer"
-
-        case 42:
-            return "softball"
-
-        case 43:
-            return "squash"
-
-        case 44: // See also HKWorkoutActivityTypeStairs and HKWorkoutActivityTypeStepTraining.
-            return "stairClimbing"
-
-        case 45: // Traditional Surfing, Kite Surfing, Wind Surfing, etc.
-            return "surfingSports"
-
-        case 46:
-            return "swimming"
-
-        case 47:
-            return "tableTennis"
-
-        case 48:
-            return "tennis"
-
-        case 49: // Shot Put, Javelin, Pole Vaulting, etc.
-            return "trackAndField"
-
-        case 50: // Primarily machines and/or free weights
-            return "traditionalStrengthTraining"
-
-        case 51:
-            return "volleyball"
-
-        case 52:
-            return "walking"
-
-        case 53:
-            return "waterFitness"
-
-        case 54:
-            return "waterPolo"
-
-        case 55: // Water Skiing, Wake Boarding, etc.
-            return "waterSports"
-
-        case 56:
-            return "wrestling"
-
-        case 57:
-            return "yoga"
-        default:
-            print("cannot find activity name")
-            return ""
-        }
-        
-    }
-    
-    // @objc func getActivityHistoryOverview(_ call: CAPPluginCall)
-    
     
     
     @objc func multipleQueryHKitSampleType(_ call: CAPPluginCall) {
@@ -1509,7 +1323,7 @@ public class CapacitorHealthkit: CAPPlugin {
                          "source": r.sourceRevision.source.name,
                          "sourceBundleId": r.sourceRevision.source.bundleIdentifier,
                          "workoutActivityId": workoutActivityTypeValue,
-                         "workoutActivityName": self.returnWorkoutActivityTypeValueDictionnary(number: workoutActivityTypeValue),
+                         "workoutActivityName": r.workoutActivityType.name,
                          "totalEnergyBurned": TEBData!, // kilocalorie
                          "totalDistance": TDData!, // meter
                          "totalFlightsClimbed": TFCData!, // count
@@ -1624,3 +1438,176 @@ public class CapacitorHealthkit: CAPPlugin {
     }
     
 }
+
+extension HKWorkoutActivityType {
+
+    /*
+     Simple mapping of available workout types to a human readable name.
+     */
+    var name: String {
+        switch self {
+            case .americanFootball:
+                return "americanFootball"
+            case .archery:
+                return "archery"
+            case .australianFootball:
+                return "australianFootball"
+            case .badminton:
+                return "badminton"
+            case .baseball:
+                return "baseball"
+            case .basketball:
+                return "basketball"
+            case .bowling:
+                return "bowling"
+            case .boxing:
+                return "boxing"
+            case .climbing:
+                return "climbing"
+            case .crossTraining:
+                return "crossTraining"
+            case .curling:
+                return "curling"
+            case .cycling:
+                return "cycling"
+            case .dance:
+                return "dance"
+            case .danceInspiredTraining:
+                return "danceInspiredTraining"
+            case .elliptical:
+                return "elliptical"
+            case .equestrianSports:
+                return "equestrianSports"
+            case .fencing:
+                return "fencing"
+            case .fishing:
+                return "fishing"
+            case .functionalStrengthTraining:
+                return "functionalStrengthTraining"
+            case .golf:
+                return "golf"
+            case .gymnastics:
+                return "gymnastics"
+            case .handball:
+                return "handball"
+            case .hiking:
+                return "hiking"
+            case .hockey:
+                return "hockey"
+            case .hunting:
+                return "hunting"
+            case .lacrosse:
+                return "lacrosse"
+            case .martialArts:
+                return "martialArts"
+            case .mindAndBody:
+                return "mindAndBody"
+            case .mixedMetabolicCardioTraining:
+                return "mixedMetabolicCardioTraining"
+            case .paddleSports:
+                return "paddleSports"
+            case .play:
+                return "play"
+            case .preparationAndRecovery:
+                return "preparationAndRecovery"
+            case .racquetball:
+                return "racquetball"
+            case .rowing:
+                return "rowing"
+            case .rugby:
+                return "rugby"
+            case .running:
+                return "running"
+            case .sailing:
+                return "sailing"
+            case .skatingSports:
+                return "skatingSports"
+            case .snowSports:
+                return "snowSports"
+            case .soccer:
+                return "soccer"
+            case .softball:
+                return "softball"
+            case .squash:
+                return "squash"
+            case .stairClimbing:
+                return "stairClimbing"
+            case .surfingSports:
+                return "surfingSports"
+            case .swimming:
+                return "swimming"
+            case .tableTennis:
+                return "tableTennis"
+            case .tennis:
+                return "tennis"
+            case .trackAndField:
+                return "trackAndField"
+            case .traditionalStrengthTraining:
+                return "traditionalStrengthTraining"
+            case .volleyball:
+                return "volleyball"
+            case .walking:
+                return "walking"
+            case .waterFitness:
+                return "waterFitness"
+            case .waterPolo:
+                return "waterPolo"
+            case .waterSports:
+                return "waterSports"
+            case .wrestling:
+                return "wrestling"
+            case .yoga:
+                return "yoga"
+
+            // iOS 10
+            case .barre:
+                return "barre"
+            case .coreTraining:
+                return "coreTraining"
+            case .crossCountrySkiing:
+                return "crossCountrySkiing"
+            case .downhillSkiing:
+                return "downhillSkiing"
+            case .flexibility:
+                return "flexibility"
+            case .highIntensityIntervalTraining:
+                return "highIntensityIntervalTraining"
+            case .jumpRope:
+                return "jumpRope"
+            case .kickboxing:
+                return "kickboxing"
+            case .pilates:
+                return "pilates"
+            case .snowboarding:
+                return "snowboarding"
+            case .stairs:
+                return "stairs"
+            case .stepTraining:
+                return "stepTraining"
+            case .wheelchairWalkPace:
+                return "wheelchairWalkPace"
+            case .wheelchairRunPace:
+                return "wheelchairRunPace"
+
+            // iOS 11
+            case .taiChi:
+                return "taiChi"
+            case .mixedCardio:
+                return "mixedCardio"
+            case .handCycling:
+                return "handCycling"
+
+            // iOS 13
+            case .discSports:
+                return "discSports"
+            case .fitnessGaming:
+                return "fitnessGaming"
+
+            // Catch-all
+            default:
+                return "other"
+        }
+    }
+
+}
+
