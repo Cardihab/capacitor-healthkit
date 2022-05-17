@@ -459,15 +459,15 @@ public class CapacitorHealthkit: CAPPlugin {
 
     func generateOutput(sampleName: String, results: [HKSample]?) -> [[String: Any]]? {
         var output: [[String: Any]] = []
-        var device: [[String: Any]];
+        var device: [String: String?] = [:];
         for result in results! {
              if (result.device != nil) {
                 device = [
-                    "deviceIdentifier": r.device?.udiDeviceIdentifier,
-                    "deviceName": r.device?.name,
-                    "manufacturer": r.device?.manufacturer,
-                    "model": r.device?.model,
-                    "version": r.device?.firmwareVersion
+                    "deviceIdentifier": result.device?.udiDeviceIdentifier,
+                    "deviceName": result.device?.name,
+                    "manufacturer": result.device?.manufacturer,
+                    "model": result.device?.model,
+                    "version": result.device?.firmwareVersion
                 ];
             }
             if sampleName == "sleepAnalysis" {
@@ -569,16 +569,16 @@ public class CapacitorHealthkit: CAPPlugin {
                     let diastolicValue = diastolic.quantity.doubleValue(for: HKUnit.millimeterOfMercury())
 
                     output.append([
-                        "uuid": data.uuid.uuidString,
+                        "uuid": sample.uuid.uuidString,
                         "value": [
                             "systolic": systolicValue,
                             "diastolic": diastolicValue
                         ],
                         "unitName": unitName,
-                        "startDate": ISO8601DateFormatter().string(from: data.startDate),
-                        "endDate": ISO8601DateFormatter().string(from: data.endDate),
-                        "source": data.sourceRevision.source.name,
-                        "sourceBundleId": data.sourceRevision.source.bundleIdentifier,
+                        "startDate": ISO8601DateFormatter().string(from: sample.startDate),
+                        "endDate": ISO8601DateFormatter().string(from: sample.endDate),
+                        "source": sample.sourceRevision.source.name,
+                        "sourceBundleId": sample.sourceRevision.source.bundleIdentifier,
                         "device": device,
                     ])
                 }
