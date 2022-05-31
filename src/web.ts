@@ -9,7 +9,7 @@ export class CapacitorHealthkitWeb extends WebPlugin implements CapacitorHealthk
     });
   }
 
-  async requestAuthorization(): Promise<any> {
+  async requestAuthorization(_options: any): Promise<any> {
     throw new Error("Method not implemented.");
   }
   async isAvailable(): Promise<any> {

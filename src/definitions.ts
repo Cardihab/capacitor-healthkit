@@ -12,7 +12,7 @@ declare global {
 }
 
 export interface CapacitorHealthkitPlugin {
-  requestAuthorization(): Promise<any>;
+  requestAuthorization(options: any): Promise<any>;
   isAvailable(): Promise<any>;
   queryHKitSampleType(options: any): Promise<any>;
   queryAggregatedDailySampleType(options: any): Promise<any>;

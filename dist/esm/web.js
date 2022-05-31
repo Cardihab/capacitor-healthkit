@@ -6,7 +6,7 @@ export class CapacitorHealthkitWeb extends WebPlugin {
             platforms: ['web']
         });
     }
-    async requestAuthorization() {
+    async requestAuthorization(_options) {
         throw new Error("Method not implemented.");
     }
     async isAvailable() {
