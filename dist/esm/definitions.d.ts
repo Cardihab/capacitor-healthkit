@@ -6,8 +6,8 @@ declare global {
 export interface CapacitorHealthkitPlugin {
     requestAuthorization(): Promise<any>;
     isAvailable(): Promise<any>;
-    queryHKitSampleType(): Promise<any>;
-    queryAggregatedDailySampleType(): Promise<any>;
+    queryHKitSampleType(options: any): Promise<any>;
+    queryAggregatedDailySampleType(options: any): Promise<any>;
     multipleQueryHKitSampleType(): Promise<any>;
     isEditionAuthorized(): Promise<any>;
     multipleIsEditionAuthorized(): Promise<any>;
