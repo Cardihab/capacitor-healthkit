@@ -4,8 +4,8 @@ export declare class CapacitorHealthkitWeb extends WebPlugin implements Capacito
     constructor();
     requestAuthorization(): Promise<any>;
     isAvailable(): Promise<any>;
-    queryHKitSampleType(): Promise<any>;
-    queryAggregatedDailySampleType(): Promise<any>;
+    queryHKitSampleType(_options: any): Promise<any>;
+    queryAggregatedDailySampleType(_options: any): Promise<any>;
     multipleQueryHKitSampleType(): Promise<any>;
     isEditionAuthorized(): Promise<any>;
     multipleIsEditionAuthorized(): Promise<any>;

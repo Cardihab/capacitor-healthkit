@@ -12,10 +12,10 @@ export class CapacitorHealthkitWeb extends WebPlugin {
     async isAvailable() {
         throw new Error("Method not implemented.");
     }
-    async queryHKitSampleType() {
+    async queryHKitSampleType(_options) {
         throw new Error("Method not implemented.");
     }
-    async queryAggregatedDailySampleType() {
+    async queryAggregatedDailySampleType(_options) {
         throw new Error("Method not implemented.");
     }
     async multipleQueryHKitSampleType() {
