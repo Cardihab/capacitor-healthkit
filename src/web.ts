@@ -1,49 +1,36 @@
 import { WebPlugin } from '@capacitor/core';
 import { CapacitorHealthkitPlugin } from './definitions';
 
-export class CapacitorHealthkitWeb extends WebPlugin implements CapacitorHealthkitPlugin {
-  constructor() {
-    super({
-      name: 'CapacitorHealthkit',
-      platforms: ['web']
-    });
-  }
+export class CapacitorHealthkit extends WebPlugin implements CapacitorHealthkitPlugin {
 
   async requestAuthorization(_options: any): Promise<any> {
-    throw new Error("Method not implemented.");
+    this.throwUnsupportedError();
   }
   async isAvailable(): Promise<any> {
-    throw new Error("Method not implemented.");
+    this.throwUnsupportedError();
   }
   async queryHKitSampleType(_options: any): Promise<any> {
-    throw new Error("Method not implemented.");
+    this.throwUnsupportedError();
   }
 
   async queryAggregatedDailySampleType(_options: any): Promise<any> {
-    throw new Error("Method not implemented.");
+    this.throwUnsupportedError();
   }
 
   async multipleQueryHKitSampleType(): Promise<any> {
-    throw new Error("Method not implemented.");
+    this.throwUnsupportedError();
   }
   async isEditionAuthorized(): Promise<any> {
-    throw new Error("Method not implemented.");
+    this.throwUnsupportedError();
   }
   async multipleIsEditionAuthorized(): Promise<any> {
-    throw new Error("Method not implemented.");
+    this.throwUnsupportedError();
   }
 
-  /* DEMO
-  async echo(options: { value: string }): Promise<{value: string}> {
-    console.log('ECHO', options);
-    return options;
+  private throwUnsupportedError(): never {
+    throw this.unavailable(
+      'CapacitorHealthkit not available in this browser.',
+    );
   }
-  */
+
 }
-
-const CapacitorHealthkit = new CapacitorHealthkitWeb();
-
-export { CapacitorHealthkit };
-
-import { registerWebPlugin } from '@capacitor/core';
-registerWebPlugin(CapacitorHealthkit);

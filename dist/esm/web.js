@@ -1,35 +1,28 @@
 import { WebPlugin } from '@capacitor/core';
-export class CapacitorHealthkitWeb extends WebPlugin {
-    constructor() {
-        super({
-            name: 'CapacitorHealthkit',
-            platforms: ['web']
-        });
-    }
+export class CapacitorHealthkit extends WebPlugin {
     async requestAuthorization(_options) {
-        throw new Error("Method not implemented.");
+        this.throwUnsupportedError();
     }
     async isAvailable() {
-        throw new Error("Method not implemented.");
+        this.throwUnsupportedError();
     }
     async queryHKitSampleType(_options) {
-        throw new Error("Method not implemented.");
+        this.throwUnsupportedError();
     }
     async queryAggregatedDailySampleType(_options) {
-        throw new Error("Method not implemented.");
+        this.throwUnsupportedError();
     }
     async multipleQueryHKitSampleType() {
-        throw new Error("Method not implemented.");
+        this.throwUnsupportedError();
     }
     async isEditionAuthorized() {
-        throw new Error("Method not implemented.");
+        this.throwUnsupportedError();
     }
     async multipleIsEditionAuthorized() {
-        throw new Error("Method not implemented.");
+        this.throwUnsupportedError();
+    }
+    throwUnsupportedError() {
+        throw this.unavailable('CapacitorHealthkit not available in this browser.');
     }
 }
-const CapacitorHealthkit = new CapacitorHealthkitWeb();
-export { CapacitorHealthkit };
-import { registerWebPlugin } from '@capacitor/core';
-registerWebPlugin(CapacitorHealthkit);
 //# sourceMappingURL=web.js.map

@@ -1,16 +1,3 @@
-/*
-declare module "@capacitor/core" {
-  interface PluginRegistry {
-    CapacitorHealthkit: CapacitorHealthkitPlugin;
-  }
-}
-*/
-declare global {
-  interface PluginRegistry {
-    CapacitorHealthkit?: CapacitorHealthkitPlugin;
-  }
-}
-
 export interface CapacitorHealthkitPlugin {
   requestAuthorization(options: any): Promise<any>;
   isAvailable(): Promise<any>;
