@@ -5,6 +5,11 @@ var healthStore = HKHealthStore()
 
 @objc(CapacitorHealthkit)
 public class CapacitorHealthkit: CAPPlugin {
+    
+    public override func load() {
+        shouldStringifyDatesInCalls = false
+    }
+
     func getSampleType(sampleName: String) -> HKSampleType? {
         switch sampleName {
         case "stepCount":
@@ -71,7 +76,8 @@ public class CapacitorHealthkit: CAPPlugin {
             case "heartRate":
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!);
             case "bloodPressure":
-                types.insert(HKWorkoutType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!);
+                types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!);
+                types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!);
             case "weight":
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!);
              case "vo2Max":
@@ -255,7 +261,9 @@ public class CapacitorHealthkit: CAPPlugin {
 
     @objc func isAvailable(_ call: CAPPluginCall) {
         if HKHealthStore.isHealthDataAvailable() {
-            return call.resolve()
+            return call.resolve([
+                "available": true
+            ])
         } else {
             return call.reject("Health data not available")
         }
