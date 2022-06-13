@@ -47,6 +47,11 @@ public class CapacitorHealthkit: CAPPlugin {
             return nil
         case "mindfulness":
             return HKObjectType.categoryType(forIdentifier: .mindfulSession)!;
+        case "standTime":
+            if #available(iOS 13.0, *) {
+                return HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleStandTime)!;
+            }
+            return nil
         default:
             return nil
         }
@@ -90,6 +95,12 @@ public class CapacitorHealthkit: CAPPlugin {
                 }
             case "mindfulness":
                 types.insert(HKObjectType.categoryType(forIdentifier: .mindfulSession)!);
+            case "standTime":
+                if #available(iOS 13.0, *) {
+                    types.insert(HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleStandTime)!);
+                } else {
+                    print("no match in case: " + item)
+                }
             default:
                 print("no match in case: " + item)
             }
