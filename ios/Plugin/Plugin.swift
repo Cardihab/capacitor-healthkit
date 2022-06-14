@@ -479,6 +479,9 @@ public class CapacitorHealthkit: CAPPlugin {
     func generateOutput(sampleName: String, results: [HKSample]?) -> [[String: Any]]? {
         var output: [[String: Any]] = []
         var device: [String: String?] = [:];
+        if results == nil {
+            return nil
+        }
         for result in results! {
              if (result.device != nil) {
                 device = [
@@ -683,9 +686,14 @@ public class CapacitorHealthkit: CAPPlugin {
         }
 
         let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: limit, sortDescriptors: nil) {
-            _, results, _ in
+            _, results, error in
+            guard let samples = results else {
+                call.reject("Could not query data")
+                return
+            }
             guard let output: [[String: Any]] = self.generateOutput(sampleName: _sampleName, results: results) else {
-                return call.reject("Error happened while generating outputs")
+                call.reject("Error happened while generating outputs")
+                return
             }
             call.resolve([
                 "countReturn": output.count,
