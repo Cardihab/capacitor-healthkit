@@ -365,37 +365,21 @@ public class CapacitorHealthkit: CAPPlugin {
             call.reject("Must provide limit")
             return
         }
-
-        var limit: Int = 0;
-
-        if (_limit == 0) {
-            limit = HKObjectQueryNoLimit;
-        } else {
-            limit = _limit;
-        }
+        
+        let limit: Int = (_limit == 0) ? HKObjectQueryNoLimit : _limit
 
         let dateFormatter = DateFormatter();
         dateFormatter.dateFormat = "yyyy/MM/dd";
 
         let startDate = dateFormatter.date(from: _startDate);
 
-        var _sampleType: HKQuantityTypeIdentifier? = nil;
-
-        switch _sampleName {
-            case "stepCount":
-                _sampleType = HKQuantityTypeIdentifier.stepCount;
-        default:
-            print("cannot match sample name");
-            call.reject("Error in sample name");
-            return
-        }
-
         guard let anchorDate = calendar.date(from: anchorComponents) else {
             fatalError("*** unable to create a valid date from the given components ***")
         }
 
-        guard let quantityType = HKObjectType.quantityType(forIdentifier: _sampleType!) else {
-            fatalError("*** Unable to create a step count type ***")
+        guard let quantityType = getSampleType(sampleName: _sampleName) as? HKQuantityType else {
+            call.reject("Unable to create aggregate for type \(_sampleName)")
+            return
         }
 
         let query = HKStatisticsCollectionQuery(quantityType: quantityType,
@@ -418,8 +402,14 @@ public class CapacitorHealthkit: CAPPlugin {
             statsCollection.enumerateStatistics(from: startDate!, to: _endDate) { [unowned self] statistics, stop in
 
                 if let quantity = statistics.sumQuantity() {
+                    var _unit: HKUnit = HKUnit.count();
+                    if statistics.quantityType.is(compatibleWith: HKUnit.minute()) {
+                        _unit = HKUnit.minute()
+                    } else if statistics.quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
+                        _unit = HKUnit.kilocalorie()
+                    }
                     let date = calendar.date(byAdding: .hour, value: 9, to: statistics.startDate)
-                    let value = quantity.doubleValue(for: HKUnit.count())
+                    let value = quantity.doubleValue(for: _unit)
 
                     // Call a custom method to plot each data point.
                     output.append([
