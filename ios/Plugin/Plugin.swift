@@ -594,6 +594,22 @@ public class CapacitorHealthkit: CAPPlugin {
                         "device": device,
                     ])
                 }
+            } else if sampleName == "mindfulness" {
+                let mindfulnessSD = result.startDate as NSDate
+                let mindfulnessED = result.endDate as NSDate
+                let mindfulnessInterval = mindfulnessED.timeIntervalSince(mindfulnessSD as Date)
+                let mindfulnessMinutes = mindfulnessInterval / 60;
+
+                output.append([
+                    "uuid": result.uuid.uuidString,
+                    "startDate": ISO8601DateFormatter().string(from: result.startDate),
+                    "endDate": ISO8601DateFormatter().string(from: result.endDate),
+                    "value": mindfulnessMinutes,
+                    "unitName": "minute",
+                    "source": result.sourceRevision.source.name,
+                    "sourceBundleId": result.sourceRevision.source.bundleIdentifier,
+                    "device": device,
+                ])
             } else {
                 guard let sample = result as? HKQuantitySample else {
                     return nil
