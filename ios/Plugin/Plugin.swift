@@ -393,7 +393,9 @@ public class CapacitorHealthkit: CAPPlugin {
 
             guard let statsCollection = results else {
                 // Perform proper error handling here
-                fatalError("*** An error occurred while calculating the statistics: \(error?.localizedDescription) ***")
+                call.reject("Unable to create aggregate for type \(_sampleName)")
+                return
+//                fatalError("*** An error occurred while calculating the statistics: \(error?.localizedDescription) ***")
             }
 
             var output: [[String: Any]] = []
