@@ -264,6 +264,13 @@ public class CapacitorHealthkit: CAPPlugin {
             return "Disc Sports"
         case HKWorkoutActivityType.fitnessGaming:
             return "Fitness Gaming"
+        // iOS 14
+        case HKWorkoutActivityType.cardioDance:
+            return "Cardio Dance"
+        case HKWorkoutActivityType.socialDance:
+            return "Social Dance"
+        case HKWorkoutActivityType.pickleball:
+            return "Pickleball"
         // Catch-all
         default:
             return "Other"
@@ -946,6 +953,14 @@ extension HKWorkoutActivityType {
                 return "discSports"
             case .fitnessGaming:
                 return "fitnessGaming"
+
+            // iOS 14
+            case .cardioDance:
+                return "cardioDance"
+            case .socialDance:
+                return "socialDance"
+            case .pickleball:
+                return "pickleball"
 
             // Catch-all
             default:
