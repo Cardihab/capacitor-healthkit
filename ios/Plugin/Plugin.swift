@@ -70,7 +70,7 @@ public class CapacitorHealthkit: CAPPlugin {
             case "activity":
                 types.insert(HKObjectType.categoryType(forIdentifier: HKCategoryTypeIdentifier.sleepAnalysis)!)
                 types.insert(HKWorkoutType.workoutType())
-            case "calories":
+            case "activeEnergyBurned":
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.activeEnergyBurned)!)
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.basalEnergyBurned)!)
             case "distance":
