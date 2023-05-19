@@ -571,7 +571,7 @@ public class CapacitorHealthkit: CAPPlugin {
                     "source": sample.sourceRevision.source.name,
                     "sourceBundleId": sample.sourceRevision.source.bundleIdentifier,
                     "workoutActivityId": sample.workoutActivityType.rawValue,
-                    "workoutActivityName": returnWorkoutActivityTypeValueDictionnary(activityType: sample.workoutActivityType),
+                    "workoutActivityName": sample.workoutActivityType.name,
                     "totalEnergyBurned": TEBData!, // kilocalorie
                     "totalDistance": TDData!, // meter
                     "totalFlightsClimbed": TFCData!, // count
