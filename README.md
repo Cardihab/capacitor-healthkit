@@ -109,6 +109,7 @@ And you're all set ! :+1:
 * [`multipleQueryHKitSampleType(...)`](#multiplequeryhkitsampletype)
 * [`isEditionAuthorized(...)`](#iseditionauthorized)
 * [`multipleIsEditionAuthorized(...)`](#multipleiseditionauthorized)
+* [`queryAggregatedDailySampleType(...)`](#queryaggregateddailysampletype)
 * [Interfaces](#interfaces)
 
 </docgen-index>
@@ -199,9 +200,24 @@ multipleIsEditionAuthorized(queryOptions: MultipleEditionQuery) => Promise<void>
 
 Checks if there is writing permission for multiple sample types. This function has not been tested.
 
-| Param              | Type                                                                  | Description                                                                |
-| ------------------ | --------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Param              | Type                                                                  | Description                                                                 |
+| ------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | **`queryOptions`** | <code><a href="#multipleeditionquery">MultipleEditionQuery</a></code> | defines the sampletypes for which you need to check for writing permission. |
+
+--------------------
+
+
+### queryAggregatedDailySampleType(...)
+
+```typescript
+queryAggregatedDailySampleType(options: any) => Promise<any>
+```
+
+| Param         | Type             | Description                                                       |
+| ------------- | ---------------- | ----------------------------------------------------------------- |
+| **`options`** | <code>any</code> | defines the sample type and the timeframe which shall be queried. |
+
+**Returns:** <code>Promise&lt;any&gt;</code>
 
 --------------------
 
@@ -261,8 +277,8 @@ This is used for checking writing permissions.
 
 This is used for checking writing permissions.
 
-| Prop              | Type                   |
-| ----------------- | ---------------------- |
+| Prop              | Type                  |
+| ----------------- | --------------------- |
 | **`sampleNames`** | <code>string[]</code> |
 
 </docgen-api>

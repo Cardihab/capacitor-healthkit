@@ -1,28 +1,26 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { WebPlugin } from '@capacitor/core';
-export class CapacitorHealthkit extends WebPlugin {
-    async requestAuthorization(_options) {
-        this.throwUnsupportedError();
+export class CapacitorHealthkitWeb extends WebPlugin {
+    async requestAuthorization(_authOptions) {
+        throw this.unimplemented('Not implemented on web.');
+    }
+    async queryHKitSampleType(_queryOptions) {
+        throw this.unimplemented('Not implemented on web.');
     }
     async isAvailable() {
-        this.throwUnsupportedError();
+        throw this.unimplemented('Not implemented on web.');
     }
-    async queryHKitSampleType(_options) {
-        this.throwUnsupportedError();
+    async multipleQueryHKitSampleType(_queryOptions) {
+        throw this.unimplemented('Not implemented on web.');
     }
-    async queryAggregatedDailySampleType(_options) {
-        this.throwUnsupportedError();
-    }
-    async multipleQueryHKitSampleType() {
-        this.throwUnsupportedError();
-    }
-    async isEditionAuthorized() {
-        this.throwUnsupportedError();
+    async isEditionAuthorized(_queryOptions) {
+        throw this.unimplemented('Not implemented on web.');
     }
     async multipleIsEditionAuthorized() {
-        this.throwUnsupportedError();
+        throw this.unimplemented('Not implemented on web.');
     }
-    throwUnsupportedError() {
-        throw this.unavailable('CapacitorHealthkit not available in this browser.');
+    async queryAggregatedDailySampleType(_options) {
+        throw this.unimplemented('Not implemented on web.');
     }
 }
 //# sourceMappingURL=web.js.map

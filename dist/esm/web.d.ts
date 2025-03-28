@@ -1,12 +1,11 @@
 import { WebPlugin } from '@capacitor/core';
-import { CapacitorHealthkitPlugin } from './definitions';
-export declare class CapacitorHealthkit extends WebPlugin implements CapacitorHealthkitPlugin {
-    requestAuthorization(_options: any): Promise<any>;
-    isAvailable(): Promise<any>;
-    queryHKitSampleType(_options: any): Promise<any>;
+import type { EditionQuery, AuthorizationQueryOptions, CapacitorHealthkitPlugin, MultipleQueryOptions, SingleQueryOptions } from './definitions';
+export declare class CapacitorHealthkitWeb extends WebPlugin implements CapacitorHealthkitPlugin {
+    requestAuthorization(_authOptions: AuthorizationQueryOptions): Promise<void>;
+    queryHKitSampleType(_queryOptions: SingleQueryOptions): Promise<any>;
+    isAvailable(): Promise<void>;
+    multipleQueryHKitSampleType(_queryOptions: MultipleQueryOptions): Promise<any>;
+    isEditionAuthorized(_queryOptions: EditionQuery): Promise<void>;
+    multipleIsEditionAuthorized(): Promise<void>;
     queryAggregatedDailySampleType(_options: any): Promise<any>;
-    multipleQueryHKitSampleType(): Promise<any>;
-    isEditionAuthorized(): Promise<any>;
-    multipleIsEditionAuthorized(): Promise<any>;
-    private throwUnsupportedError;
 }
