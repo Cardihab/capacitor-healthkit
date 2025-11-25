@@ -152,10 +152,12 @@ This defines a query to the Healthkit for a single type of data.
 ### isAvailable()
 
 ```typescript
-isAvailable() => Promise<void>
+isAvailable() => Promise<{ available: boolean; }>
 ```
 
 This functions resolves if HealthKitData is available it uses the native HKHealthStore.isHealthDataAvailable() funtion of the HealthKit .
+
+**Returns:** <code>Promise&lt;{ available: boolean; }&gt;</code>
 
 --------------------
 

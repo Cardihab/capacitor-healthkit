@@ -3,7 +3,9 @@ import type { EditionQuery, AuthorizationQueryOptions, CapacitorHealthkitPlugin,
 export declare class CapacitorHealthkitWeb extends WebPlugin implements CapacitorHealthkitPlugin {
     requestAuthorization(_authOptions: AuthorizationQueryOptions): Promise<void>;
     queryHKitSampleType(_queryOptions: SingleQueryOptions): Promise<any>;
-    isAvailable(): Promise<void>;
+    isAvailable(): Promise<{
+        available: boolean;
+    }>;
     multipleQueryHKitSampleType(_queryOptions: MultipleQueryOptions): Promise<any>;
     isEditionAuthorized(_queryOptions: EditionQuery): Promise<void>;
     multipleIsEditionAuthorized(): Promise<void>;

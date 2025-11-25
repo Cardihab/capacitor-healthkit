@@ -22,7 +22,7 @@ export class CapacitorHealthkitWeb
     throw this.unimplemented('Not implemented on web.');
   }
 
-  async isAvailable(): Promise<void> {
+  async isAvailable(): Promise<{ available: boolean }> {
     throw this.unimplemented('Not implemented on web.');
   }
 

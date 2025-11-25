@@ -13,7 +13,9 @@ export interface CapacitorHealthkitPlugin {
     /**
      * This functions resolves if HealthKitData is available it uses the native HKHealthStore.isHealthDataAvailable() funtion of the HealthKit .
      */
-    isAvailable(): Promise<void>;
+    isAvailable(): Promise<{
+        available: boolean;
+    }>;
     /**
      * This defines a query to the Healthkit for a single type of data. This function has not been tested.
      * @param queryOptions defines the sample types which can be queried for
