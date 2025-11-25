@@ -2,28 +2,38 @@ export interface CapacitorHealthkitPlugin {
   /**
    * This functions will open the iOS Screen to let users choose their permissions. Keep in mind as developers, if the access has been denied by the user we will have no way of knowing - the query results will instead just be empty arrays.
    * @param authOptions These define which access we need. Possible Options include ['calories', 'stairs', 'activity', 'steps', 'distance', 'duration', 'weight'].
-
    */
   requestAuthorization(authOptions: AuthorizationQueryOptions): Promise<void>;
+
   /**
    * This defines a query to the Healthkit for a single type of data.
    * @param queryOptions defines the type of data and the timeframe which shall be queried, a limit can be set to reduce the number of results.
    */
-  queryHKitSampleType<T>(queryOptions:SingleQueryOptions): Promise<QueryOutput<T>>;
+  queryHKitSampleType<T>(queryOptions: SingleQueryOptions): Promise<QueryOutput<T>>;
+
   /**
-   * This functions resolves if HealthKitData is available it uses the native HKHealthStore.isHealthDataAvailable() funtion of the HealthKit .
+   * This defines an anchored query to the Healthkit for a single type of data. Returns new/modified/deleted samples since the last anchor.
+   * @param queryOptions defines the type of data, timeframe, and optional anchor for incremental queries.
+   */
+  queryHKitSampleTypeAnchored<T>(queryOptions: AnchoredQueryOptions): Promise<AnchoredQueryOutput<T>>;
+
+  /**
+   * This functions resolves if HealthKitData is available it uses the native HKHealthStore.isHealthDataAvailable() function of the HealthKit.
    */
   isAvailable(): Promise<{ available: boolean }>;
+
   /**
    * This defines a query to the Healthkit for a single type of data. This function has not been tested.
    * @param queryOptions defines the sample types which can be queried for
    */
-  multipleQueryHKitSampleType(queryOptions:MultipleQueryOptions): Promise<any>;
+  multipleQueryHKitSampleType(queryOptions: MultipleQueryOptions): Promise<any>;
+
   /**
    * Checks if there is writing permission for one specific sample type. This function has not been tested.
    * @param queryOptions defines the sampletype for which you need to check for writing permission.
    */
   isEditionAuthorized(queryOptions: EditionQuery): Promise<void>;
+
   /**
    * Checks if there is writing permission for multiple sample types. This function has not been tested.
    * @param queryOptions defines the sampletypes for which you need to check for writing permission.
@@ -31,11 +41,16 @@ export interface CapacitorHealthkitPlugin {
   multipleIsEditionAuthorized(queryOptions: MultipleEditionQuery): Promise<void>;
 
   /**
-   * 
+   * Query aggregated daily sample data from HealthKit.
    * @param options defines the sample type and the timeframe which shall be queried.
    */
-  queryAggregatedDailySampleType(options: any): Promise<any>;
+  queryAggregatedDailySampleType(options: AggregatedQueryOptions): Promise<AggregatedQueryOutput>;
 
+  /**
+   * Query aggregated daily sample data from HealthKit with anchor support for incremental updates.
+   * @param options defines the sample type, timeframe, and optional anchor for incremental queries.
+   */
+  queryAggregatedDailySampleTypeAnchored(options: AnchoredAggregatedQueryOptions): Promise<AnchoredAggregatedQueryOutput>;
 }
 
 /**
@@ -46,12 +61,54 @@ export interface QueryOutput<T = SleepData | ActivityData | OtherData> {
   resultData: T[];
 }
 
+/**
+ * Extended query output for anchored queries, includes anchor for next query and deleted sample UUIDs.
+ */
+export interface AnchoredQueryOutput<T = SleepData | ActivityData | OtherData> extends QueryOutput<T> {
+  anchor?: string;
+  deletedUUIDs: string[];
+}
+
+/**
+ * Output for aggregated queries.
+ */
+export interface AggregatedQueryOutput {
+  resultData: AggregatedData[];
+}
+
+/**
+ * Extended aggregated query output with anchor support.
+ */
+export interface AnchoredAggregatedQueryOutput extends AggregatedQueryOutput {
+  anchor?: string;
+}
+
+/**
+ * Data structure for aggregated daily results.
+ */
+export interface AggregatedData {
+  value: number;
+  startDate: string;
+  date: string;
+}
+
 export interface DeviceInformation {
   name: string;
   manufacturer: string;
   model: string;
   hardwareVersion: string;
   softwareVersion: string;
+}
+
+/**
+ * UDI Device information from HealthKit samples.
+ */
+export interface UDIDeviceInformation {
+  deviceIdentifier?: string;
+  deviceName?: string;
+  manufacturer?: string;
+  model?: string;
+  version?: string;
 }
 
 /**
@@ -64,19 +121,20 @@ export interface BaseData {
   uuid: string;
   sourceBundleId: string;
   device: DeviceInformation | null;
+  udiDevice?: UDIDeviceInformation;
   duration: number;
 }
 
 /**
  * These data points are specific for sleep data.
  */
-export interface SleepData extends BaseData  {
+export interface SleepData extends BaseData {
   sleepState: string;
   timeZone: string;
 }
 
 /**
- * These data points are specific for activities - not every activity automatically has a corresponding entry. 
+ * These data points are specific for activities - not every activity automatically has a corresponding entry.
  */
 export interface ActivityData extends BaseData {
   totalFlightsClimbed: number;
@@ -112,12 +170,41 @@ export interface SingleQueryOptions extends BaseQueryOptions {
 }
 
 /**
+ * Query options for anchored queries.
+ */
+export interface AnchoredQueryOptions {
+  sampleName: string;
+  startDate: string;
+  endDate: string;
+  anchor?: string;
+}
+
+/**
+ * Query options for aggregated daily data.
+ */
+export interface AggregatedQueryOptions {
+  sampleName: string;
+  startDate: string;
+  endDate: Date;
+  limit: number;
+}
+
+/**
+ * Query options for anchored aggregated queries.
+ */
+export interface AnchoredAggregatedQueryOptions {
+  sampleName: string;
+  startDate: string;
+  endDate: Date;
+  anchor?: string;
+}
+
+/**
  * This extends the Basequeryoptions for a multiple sample types.
  */
 export interface MultipleQueryOptions extends BaseQueryOptions {
   sampleNames: string[];
 }
-
 
 /**
  * Used for authorization of reading and writing access.
@@ -128,7 +215,6 @@ export interface AuthorizationQueryOptions {
   all: string[];
 }
 
-
 /**
  * This is used for checking writing permissions.
  */
@@ -136,14 +222,12 @@ export interface EditionQuery {
   sampleName: string;
 }
 
-
 /**
  * This is used for checking writing permissions.
  */
 export interface MultipleEditionQuery {
   sampleNames: string[];
 }
-
 
 /**
  * These Sample names define the possible query options.
@@ -168,5 +252,9 @@ export enum SampleNames {
   BASAL_BODY_TEMPERATURE = 'basalBodyTemperature',
   BODY_TEMPERATURE = 'bodyTemperature',
   BLOOD_PRESSURE_SYSTOLIC = 'bloodPressureSystolic',
-  BLOOD_PRESSURE_DIASTOLIC = 'bloodPressureDiastolic'
+  BLOOD_PRESSURE_DIASTOLIC = 'bloodPressureDiastolic',
+  VO2_MAX = 'vo2Max',
+  SIX_MINUTE_WALK_TEST_DISTANCE = 'sixMinuteWalkTestDistance',
+  MINDFULNESS = 'mindfulness',
+  STAND_TIME = 'standTime'
 }

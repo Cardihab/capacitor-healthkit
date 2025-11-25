@@ -105,11 +105,13 @@ And you're all set ! :+1:
 
 * [`requestAuthorization(...)`](#requestauthorization)
 * [`queryHKitSampleType(...)`](#queryhkitsampletype)
+* [`queryHKitSampleTypeAnchored(...)`](#queryhkitsampletypeanchored)
 * [`isAvailable()`](#isavailable)
 * [`multipleQueryHKitSampleType(...)`](#multiplequeryhkitsampletype)
 * [`isEditionAuthorized(...)`](#iseditionauthorized)
 * [`multipleIsEditionAuthorized(...)`](#multipleiseditionauthorized)
 * [`queryAggregatedDailySampleType(...)`](#queryaggregateddailysampletype)
+* [`queryAggregatedDailySampleTypeAnchored(...)`](#queryaggregateddailysampletypeanchored)
 * [Interfaces](#interfaces)
 
 </docgen-index>
@@ -149,13 +151,30 @@ This defines a query to the Healthkit for a single type of data.
 --------------------
 
 
+### queryHKitSampleTypeAnchored(...)
+
+```typescript
+queryHKitSampleTypeAnchored<T>(queryOptions: AnchoredQueryOptions) => Promise<AnchoredQueryOutput<T>>
+```
+
+This defines an anchored query to the Healthkit for a single type of data. Returns new/modified/deleted samples since the last anchor.
+
+| Param              | Type                                                                  | Description                                                                       |
+| ------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **`queryOptions`** | <code><a href="#anchoredqueryoptions">AnchoredQueryOptions</a></code> | defines the type of data, timeframe, and optional anchor for incremental queries. |
+
+**Returns:** <code>Promise&lt;<a href="#anchoredqueryoutput">AnchoredQueryOutput</a>&lt;T&gt;&gt;</code>
+
+--------------------
+
+
 ### isAvailable()
 
 ```typescript
 isAvailable() => Promise<{ available: boolean; }>
 ```
 
-This functions resolves if HealthKitData is available it uses the native HKHealthStore.isHealthDataAvailable() funtion of the HealthKit .
+This functions resolves if HealthKitData is available it uses the native HKHealthStore.isHealthDataAvailable() function of the HealthKit.
 
 **Returns:** <code>Promise&lt;{ available: boolean; }&gt;</code>
 
@@ -212,14 +231,33 @@ Checks if there is writing permission for multiple sample types. This function h
 ### queryAggregatedDailySampleType(...)
 
 ```typescript
-queryAggregatedDailySampleType(options: any) => Promise<any>
+queryAggregatedDailySampleType(options: AggregatedQueryOptions) => Promise<AggregatedQueryOutput>
 ```
 
-| Param         | Type             | Description                                                       |
-| ------------- | ---------------- | ----------------------------------------------------------------- |
-| **`options`** | <code>any</code> | defines the sample type and the timeframe which shall be queried. |
+Query aggregated daily sample data from HealthKit.
 
-**Returns:** <code>Promise&lt;any&gt;</code>
+| Param         | Type                                                                      | Description                                                       |
+| ------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **`options`** | <code><a href="#aggregatedqueryoptions">AggregatedQueryOptions</a></code> | defines the sample type and the timeframe which shall be queried. |
+
+**Returns:** <code>Promise&lt;<a href="#aggregatedqueryoutput">AggregatedQueryOutput</a>&gt;</code>
+
+--------------------
+
+
+### queryAggregatedDailySampleTypeAnchored(...)
+
+```typescript
+queryAggregatedDailySampleTypeAnchored(options: AnchoredAggregatedQueryOptions) => Promise<AnchoredAggregatedQueryOutput>
+```
+
+Query aggregated daily sample data from HealthKit with anchor support for incremental updates.
+
+| Param         | Type                                                                                      | Description                                                                      |
+| ------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#anchoredaggregatedqueryoptions">AnchoredAggregatedQueryOptions</a></code> | defines the sample type, timeframe, and optional anchor for incremental queries. |
+
+**Returns:** <code>Promise&lt;<a href="#anchoredaggregatedqueryoutput">AnchoredAggregatedQueryOutput</a>&gt;</code>
 
 --------------------
 
@@ -257,6 +295,28 @@ This extends the Basequeryoptions for a single sample type.
 | **`sampleName`** | <code>string</code> |
 
 
+#### AnchoredQueryOutput
+
+Extended query output for anchored queries, includes anchor for next query and deleted sample UUIDs.
+
+| Prop               | Type                  |
+| ------------------ | --------------------- |
+| **`anchor`**       | <code>string</code>   |
+| **`deletedUUIDs`** | <code>string[]</code> |
+
+
+#### AnchoredQueryOptions
+
+Query options for anchored queries.
+
+| Prop             | Type                |
+| ---------------- | ------------------- |
+| **`sampleName`** | <code>string</code> |
+| **`startDate`**  | <code>string</code> |
+| **`endDate`**    | <code>string</code> |
+| **`anchor`**     | <code>string</code> |
+
+
 #### MultipleQueryOptions
 
 This extends the Basequeryoptions for a multiple sample types.
@@ -282,6 +342,110 @@ This is used for checking writing permissions.
 | Prop              | Type                  |
 | ----------------- | --------------------- |
 | **`sampleNames`** | <code>string[]</code> |
+
+
+#### AggregatedQueryOutput
+
+Output for aggregated queries.
+
+| Prop             | Type                          |
+| ---------------- | ----------------------------- |
+| **`resultData`** | <code>AggregatedData[]</code> |
+
+
+#### AggregatedData
+
+Data structure for aggregated daily results.
+
+| Prop            | Type                |
+| --------------- | ------------------- |
+| **`value`**     | <code>number</code> |
+| **`startDate`** | <code>string</code> |
+| **`date`**      | <code>string</code> |
+
+
+#### AggregatedQueryOptions
+
+Query options for aggregated daily data.
+
+| Prop             | Type                                  |
+| ---------------- | ------------------------------------- |
+| **`sampleName`** | <code>string</code>                   |
+| **`startDate`**  | <code>string</code>                   |
+| **`endDate`**    | <code><a href="#date">Date</a></code> |
+| **`limit`**      | <code>number</code>                   |
+
+
+#### Date
+
+Enables basic storage and retrieval of dates and times.
+
+| Method                 | Signature                                                                                                    | Description                                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **toString**           | () =&gt; string                                                                                              | Returns a string representation of a date. The format of the string depends on the locale.                                              |
+| **toDateString**       | () =&gt; string                                                                                              | Returns a date as a string value.                                                                                                       |
+| **toTimeString**       | () =&gt; string                                                                                              | Returns a time as a string value.                                                                                                       |
+| **toLocaleString**     | () =&gt; string                                                                                              | Returns a value as a string value appropriate to the host environment's current locale.                                                 |
+| **toLocaleDateString** | () =&gt; string                                                                                              | Returns a date as a string value appropriate to the host environment's current locale.                                                  |
+| **toLocaleTimeString** | () =&gt; string                                                                                              | Returns a time as a string value appropriate to the host environment's current locale.                                                  |
+| **valueOf**            | () =&gt; number                                                                                              | Returns the stored time value in milliseconds since midnight, January 1, 1970 UTC.                                                      |
+| **getTime**            | () =&gt; number                                                                                              | Gets the time value in milliseconds.                                                                                                    |
+| **getFullYear**        | () =&gt; number                                                                                              | Gets the year, using local time.                                                                                                        |
+| **getUTCFullYear**     | () =&gt; number                                                                                              | Gets the year using Universal Coordinated Time (UTC).                                                                                   |
+| **getMonth**           | () =&gt; number                                                                                              | Gets the month, using local time.                                                                                                       |
+| **getUTCMonth**        | () =&gt; number                                                                                              | Gets the month of a <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                             |
+| **getDate**            | () =&gt; number                                                                                              | Gets the day-of-the-month, using local time.                                                                                            |
+| **getUTCDate**         | () =&gt; number                                                                                              | Gets the day-of-the-month, using Universal Coordinated Time (UTC).                                                                      |
+| **getDay**             | () =&gt; number                                                                                              | Gets the day of the week, using local time.                                                                                             |
+| **getUTCDay**          | () =&gt; number                                                                                              | Gets the day of the week using Universal Coordinated Time (UTC).                                                                        |
+| **getHours**           | () =&gt; number                                                                                              | Gets the hours in a date, using local time.                                                                                             |
+| **getUTCHours**        | () =&gt; number                                                                                              | Gets the hours value in a <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                       |
+| **getMinutes**         | () =&gt; number                                                                                              | Gets the minutes of a <a href="#date">Date</a> object, using local time.                                                                |
+| **getUTCMinutes**      | () =&gt; number                                                                                              | Gets the minutes of a <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                           |
+| **getSeconds**         | () =&gt; number                                                                                              | Gets the seconds of a <a href="#date">Date</a> object, using local time.                                                                |
+| **getUTCSeconds**      | () =&gt; number                                                                                              | Gets the seconds of a <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                           |
+| **getMilliseconds**    | () =&gt; number                                                                                              | Gets the milliseconds of a <a href="#date">Date</a>, using local time.                                                                  |
+| **getUTCMilliseconds** | () =&gt; number                                                                                              | Gets the milliseconds of a <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                      |
+| **getTimezoneOffset**  | () =&gt; number                                                                                              | Gets the difference in minutes between the time on the local computer and Universal Coordinated Time (UTC).                             |
+| **setTime**            | (time: number) =&gt; number                                                                                  | Sets the date and time value in the <a href="#date">Date</a> object.                                                                    |
+| **setMilliseconds**    | (ms: number) =&gt; number                                                                                    | Sets the milliseconds value in the <a href="#date">Date</a> object using local time.                                                    |
+| **setUTCMilliseconds** | (ms: number) =&gt; number                                                                                    | Sets the milliseconds value in the <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                              |
+| **setSeconds**         | (sec: number, ms?: number \| undefined) =&gt; number                                                         | Sets the seconds value in the <a href="#date">Date</a> object using local time.                                                         |
+| **setUTCSeconds**      | (sec: number, ms?: number \| undefined) =&gt; number                                                         | Sets the seconds value in the <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                   |
+| **setMinutes**         | (min: number, sec?: number \| undefined, ms?: number \| undefined) =&gt; number                              | Sets the minutes value in the <a href="#date">Date</a> object using local time.                                                         |
+| **setUTCMinutes**      | (min: number, sec?: number \| undefined, ms?: number \| undefined) =&gt; number                              | Sets the minutes value in the <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                   |
+| **setHours**           | (hours: number, min?: number \| undefined, sec?: number \| undefined, ms?: number \| undefined) =&gt; number | Sets the hour value in the <a href="#date">Date</a> object using local time.                                                            |
+| **setUTCHours**        | (hours: number, min?: number \| undefined, sec?: number \| undefined, ms?: number \| undefined) =&gt; number | Sets the hours value in the <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                     |
+| **setDate**            | (date: number) =&gt; number                                                                                  | Sets the numeric day-of-the-month value of the <a href="#date">Date</a> object using local time.                                        |
+| **setUTCDate**         | (date: number) =&gt; number                                                                                  | Sets the numeric day of the month in the <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                        |
+| **setMonth**           | (month: number, date?: number \| undefined) =&gt; number                                                     | Sets the month value in the <a href="#date">Date</a> object using local time.                                                           |
+| **setUTCMonth**        | (month: number, date?: number \| undefined) =&gt; number                                                     | Sets the month value in the <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                     |
+| **setFullYear**        | (year: number, month?: number \| undefined, date?: number \| undefined) =&gt; number                         | Sets the year of the <a href="#date">Date</a> object using local time.                                                                  |
+| **setUTCFullYear**     | (year: number, month?: number \| undefined, date?: number \| undefined) =&gt; number                         | Sets the year value in the <a href="#date">Date</a> object using Universal Coordinated Time (UTC).                                      |
+| **toUTCString**        | () =&gt; string                                                                                              | Returns a date converted to a string using Universal Coordinated Time (UTC).                                                            |
+| **toISOString**        | () =&gt; string                                                                                              | Returns a date as a string value in ISO format.                                                                                         |
+| **toJSON**             | (key?: any) =&gt; string                                                                                     | Used by the JSON.stringify method to enable the transformation of an object's data for JavaScript Object Notation (JSON) serialization. |
+
+
+#### AnchoredAggregatedQueryOutput
+
+Extended aggregated query output with anchor support.
+
+| Prop         | Type                |
+| ------------ | ------------------- |
+| **`anchor`** | <code>string</code> |
+
+
+#### AnchoredAggregatedQueryOptions
+
+Query options for anchored aggregated queries.
+
+| Prop             | Type                                  |
+| ---------------- | ------------------------------------- |
+| **`sampleName`** | <code>string</code>                   |
+| **`startDate`**  | <code>string</code>                   |
+| **`endDate`**    | <code><a href="#date">Date</a></code> |
+| **`anchor`**     | <code>string</code>                   |
 
 </docgen-api>
 

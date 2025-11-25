@@ -7,6 +7,14 @@ import type {
   CapacitorHealthkitPlugin,
   MultipleQueryOptions,
   SingleQueryOptions,
+  AnchoredQueryOptions,
+  AggregatedQueryOptions,
+  AnchoredAggregatedQueryOptions,
+  QueryOutput,
+  AnchoredQueryOutput,
+  AggregatedQueryOutput,
+  AnchoredAggregatedQueryOutput,
+  MultipleEditionQuery,
 } from './definitions';
 
 export class CapacitorHealthkitWeb
@@ -18,7 +26,11 @@ export class CapacitorHealthkitWeb
     throw this.unimplemented('Not implemented on web.');
   }
 
-  async queryHKitSampleType(_queryOptions: SingleQueryOptions): Promise<any> {
+  async queryHKitSampleType<T>(_queryOptions: SingleQueryOptions): Promise<QueryOutput<T>> {
+    throw this.unimplemented('Not implemented on web.');
+  }
+
+  async queryHKitSampleTypeAnchored<T>(_queryOptions: AnchoredQueryOptions): Promise<AnchoredQueryOutput<T>> {
     throw this.unimplemented('Not implemented on web.');
   }
 
@@ -36,11 +48,15 @@ export class CapacitorHealthkitWeb
     throw this.unimplemented('Not implemented on web.');
   }
 
-  async multipleIsEditionAuthorized(): Promise<void> {
+  async multipleIsEditionAuthorized(_queryOptions: MultipleEditionQuery): Promise<void> {
     throw this.unimplemented('Not implemented on web.');
   }
 
-  async queryAggregatedDailySampleType(_options: any): Promise<any> {
+  async queryAggregatedDailySampleType(_options: AggregatedQueryOptions): Promise<AggregatedQueryOutput> {
+    throw this.unimplemented('Not implemented on web.');
+  }
+
+  async queryAggregatedDailySampleTypeAnchored(_options: AnchoredAggregatedQueryOptions): Promise<AnchoredAggregatedQueryOutput> {
     throw this.unimplemented('Not implemented on web.');
   }
 }

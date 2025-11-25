@@ -2,7 +2,6 @@ export interface CapacitorHealthkitPlugin {
     /**
      * This functions will open the iOS Screen to let users choose their permissions. Keep in mind as developers, if the access has been denied by the user we will have no way of knowing - the query results will instead just be empty arrays.
      * @param authOptions These define which access we need. Possible Options include ['calories', 'stairs', 'activity', 'steps', 'distance', 'duration', 'weight'].
-  
      */
     requestAuthorization(authOptions: AuthorizationQueryOptions): Promise<void>;
     /**
@@ -11,7 +10,12 @@ export interface CapacitorHealthkitPlugin {
      */
     queryHKitSampleType<T>(queryOptions: SingleQueryOptions): Promise<QueryOutput<T>>;
     /**
-     * This functions resolves if HealthKitData is available it uses the native HKHealthStore.isHealthDataAvailable() funtion of the HealthKit .
+     * This defines an anchored query to the Healthkit for a single type of data. Returns new/modified/deleted samples since the last anchor.
+     * @param queryOptions defines the type of data, timeframe, and optional anchor for incremental queries.
+     */
+    queryHKitSampleTypeAnchored<T>(queryOptions: AnchoredQueryOptions): Promise<AnchoredQueryOutput<T>>;
+    /**
+     * This functions resolves if HealthKitData is available it uses the native HKHealthStore.isHealthDataAvailable() function of the HealthKit.
      */
     isAvailable(): Promise<{
         available: boolean;
@@ -32,10 +36,15 @@ export interface CapacitorHealthkitPlugin {
      */
     multipleIsEditionAuthorized(queryOptions: MultipleEditionQuery): Promise<void>;
     /**
-     *
+     * Query aggregated daily sample data from HealthKit.
      * @param options defines the sample type and the timeframe which shall be queried.
      */
-    queryAggregatedDailySampleType(options: any): Promise<any>;
+    queryAggregatedDailySampleType(options: AggregatedQueryOptions): Promise<AggregatedQueryOutput>;
+    /**
+     * Query aggregated daily sample data from HealthKit with anchor support for incremental updates.
+     * @param options defines the sample type, timeframe, and optional anchor for incremental queries.
+     */
+    queryAggregatedDailySampleTypeAnchored(options: AnchoredAggregatedQueryOptions): Promise<AnchoredAggregatedQueryOutput>;
 }
 /**
  * This interface is used for any results coming from HealthKit. It always has a count and the actual results.
@@ -44,12 +53,49 @@ export interface QueryOutput<T = SleepData | ActivityData | OtherData> {
     countReturn: number;
     resultData: T[];
 }
+/**
+ * Extended query output for anchored queries, includes anchor for next query and deleted sample UUIDs.
+ */
+export interface AnchoredQueryOutput<T = SleepData | ActivityData | OtherData> extends QueryOutput<T> {
+    anchor?: string;
+    deletedUUIDs: string[];
+}
+/**
+ * Output for aggregated queries.
+ */
+export interface AggregatedQueryOutput {
+    resultData: AggregatedData[];
+}
+/**
+ * Extended aggregated query output with anchor support.
+ */
+export interface AnchoredAggregatedQueryOutput extends AggregatedQueryOutput {
+    anchor?: string;
+}
+/**
+ * Data structure for aggregated daily results.
+ */
+export interface AggregatedData {
+    value: number;
+    startDate: string;
+    date: string;
+}
 export interface DeviceInformation {
     name: string;
     manufacturer: string;
     model: string;
     hardwareVersion: string;
     softwareVersion: string;
+}
+/**
+ * UDI Device information from HealthKit samples.
+ */
+export interface UDIDeviceInformation {
+    deviceIdentifier?: string;
+    deviceName?: string;
+    manufacturer?: string;
+    model?: string;
+    version?: string;
 }
 /**
  * These data points are returned for every entry.
@@ -61,6 +107,7 @@ export interface BaseData {
     uuid: string;
     sourceBundleId: string;
     device: DeviceInformation | null;
+    udiDevice?: UDIDeviceInformation;
     duration: number;
 }
 /**
@@ -101,6 +148,33 @@ export interface BaseQueryOptions {
  */
 export interface SingleQueryOptions extends BaseQueryOptions {
     sampleName: string;
+}
+/**
+ * Query options for anchored queries.
+ */
+export interface AnchoredQueryOptions {
+    sampleName: string;
+    startDate: string;
+    endDate: string;
+    anchor?: string;
+}
+/**
+ * Query options for aggregated daily data.
+ */
+export interface AggregatedQueryOptions {
+    sampleName: string;
+    startDate: string;
+    endDate: Date;
+    limit: number;
+}
+/**
+ * Query options for anchored aggregated queries.
+ */
+export interface AnchoredAggregatedQueryOptions {
+    sampleName: string;
+    startDate: string;
+    endDate: Date;
+    anchor?: string;
 }
 /**
  * This extends the Basequeryoptions for a multiple sample types.
@@ -151,5 +225,9 @@ export declare enum SampleNames {
     BASAL_BODY_TEMPERATURE = "basalBodyTemperature",
     BODY_TEMPERATURE = "bodyTemperature",
     BLOOD_PRESSURE_SYSTOLIC = "bloodPressureSystolic",
-    BLOOD_PRESSURE_DIASTOLIC = "bloodPressureDiastolic"
+    BLOOD_PRESSURE_DIASTOLIC = "bloodPressureDiastolic",
+    VO2_MAX = "vo2Max",
+    SIX_MINUTE_WALK_TEST_DISTANCE = "sixMinuteWalkTestDistance",
+    MINDFULNESS = "mindfulness",
+    STAND_TIME = "standTime"
 }

@@ -7,6 +7,9 @@ export class CapacitorHealthkitWeb extends WebPlugin {
     async queryHKitSampleType(_queryOptions) {
         throw this.unimplemented('Not implemented on web.');
     }
+    async queryHKitSampleTypeAnchored(_queryOptions) {
+        throw this.unimplemented('Not implemented on web.');
+    }
     async isAvailable() {
         throw this.unimplemented('Not implemented on web.');
     }
@@ -16,10 +19,13 @@ export class CapacitorHealthkitWeb extends WebPlugin {
     async isEditionAuthorized(_queryOptions) {
         throw this.unimplemented('Not implemented on web.');
     }
-    async multipleIsEditionAuthorized() {
+    async multipleIsEditionAuthorized(_queryOptions) {
         throw this.unimplemented('Not implemented on web.');
     }
     async queryAggregatedDailySampleType(_options) {
+        throw this.unimplemented('Not implemented on web.');
+    }
+    async queryAggregatedDailySampleTypeAnchored(_options) {
         throw this.unimplemented('Not implemented on web.');
     }
 }
