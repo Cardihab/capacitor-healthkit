@@ -195,7 +195,7 @@ export interface AggregatedQueryOptions {
 export interface AnchoredAggregatedQueryOptions {
   sampleName: string;
   startDate: string;
-  endDate: Date;
+  endDate: string;
   anchor?: string;
 }
 

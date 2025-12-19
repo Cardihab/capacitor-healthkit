@@ -440,12 +440,12 @@ Extended aggregated query output with anchor support.
 
 Query options for anchored aggregated queries.
 
-| Prop             | Type                                  |
-| ---------------- | ------------------------------------- |
-| **`sampleName`** | <code>string</code>                   |
-| **`startDate`**  | <code>string</code>                   |
-| **`endDate`**    | <code><a href="#date">Date</a></code> |
-| **`anchor`**     | <code>string</code>                   |
+| Prop             | Type                |
+| ---------------- | ------------------- |
+| **`sampleName`** | <code>string</code> |
+| **`startDate`**  | <code>string</code> |
+| **`endDate`**    | <code>string</code> |
+| **`anchor`**     | <code>string</code> |
 
 </docgen-api>
 

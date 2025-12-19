@@ -455,109 +455,6 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
         healthStore.execute(query)
     }
 
-    @objc func queryAggregatedDailySampleTypeAnchored(_ call: CAPPluginCall) {
-        let calendar = Calendar.current
-        
-        let interval = DateComponents(day: 1)
-        
-        var anchorComponents = calendar.dateComponents([.day, .month, .year], from: Date())
-        anchorComponents.hour = 0
-        
-        guard let _sampleName = call.options["sampleName"] as? String else {
-            call.reject("Must provide sampleName")
-            return
-        }
-        guard let _startDate = call.options["startDate"] as? String else {
-            call.reject("Must provide startDate")
-            return
-        }
-        guard let _endDate = call.options["endDate"] as? Date else {
-            call.reject("Must provide endDate")
-            return
-        }
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy/MM/dd"
-        
-        guard let startDate = dateFormatter.date(from: _startDate) else {
-            call.reject("Invalid startDate format")
-            return
-        }
-        
-        guard let anchorDate = calendar.date(from: anchorComponents) else {
-            call.reject("Unable to create anchor date")
-            return
-        }
-        
-        guard let quantityType = getSampleType(sampleName: _sampleName) as? HKQuantityType else {
-            call.reject("Unable to create aggregate for type \(_sampleName)")
-            return
-        }
-        
-        // Get anchor if provided
-        var anchor: HKQueryAnchor? = nil
-        if let anchorData = call.options["anchor"] as? String,
-        let decodedData = Data(base64Encoded: anchorData) {
-            anchor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: HKQueryAnchor.self, from: decodedData)
-        }
-        
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: _endDate, options: .strictStartDate)
-        
-        // For aggregated data, we still use HKStatisticsCollectionQuery
-        // but we'll track changes manually since statistics don't support anchored queries directly
-        let query = HKStatisticsCollectionQuery(
-            quantityType: quantityType,
-            quantitySamplePredicate: predicate,
-            options: .cumulativeSum,
-            anchorDate: anchorDate,
-            intervalComponents: interval
-        )
-        
-        query.initialResultsHandler = { query, results, error in
-            
-            guard let statsCollection = results else {
-                call.reject("Unable to create aggregate for type \(_sampleName)")
-                return
-            }
-            
-            var output: [[String: Any]] = []
-            let iso8601DateFormatter = ISO8601DateFormatter()
-            iso8601DateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            
-            statsCollection.enumerateStatistics(from: startDate, to: _endDate) { statistics, stop in
-                
-                if let quantity = statistics.sumQuantity() {
-                    var _unit: HKUnit = HKUnit.count()
-                    if statistics.quantityType.is(compatibleWith: HKUnit.minute()) {
-                        _unit = HKUnit.minute()
-                    } else if statistics.quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
-                        _unit = HKUnit.kilocalorie()
-                    }
-                    
-                    let value = quantity.doubleValue(for: _unit)
-                    
-                    // Use the actual start date without timezone adjustment
-                    output.append([
-                        "value": value,
-                        "startDate": iso8601DateFormatter.string(from: statistics.startDate),
-                        "date": iso8601DateFormatter.string(from: statistics.startDate)
-                    ])
-                }
-            }
-            
-            // Generate a simple anchor for aggregated queries (timestamp-based)
-            let anchorTimestamp = Date().timeIntervalSince1970
-            let anchorString = String(anchorTimestamp)
-            
-            call.resolve([
-                "resultData": output,
-                "anchor": anchorString
-            ])
-        }
-        
-        healthStore.execute(query)
-    }
-
     @objc func queryAggregatedDailySampleType(_ call: CAPPluginCall) {
         let calendar = Calendar.current
 
@@ -574,10 +471,11 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             call.reject("Must provide startDate")
             return
         }
-        guard let _endDate = call.options["endDate"] as? Date else {
+        guard let _endDate = call.options["endDate"] as? String else {
             call.reject("Must provide endDate")
             return
         }
+
         guard let _limit = call.options["limit"] as? Int else {
             call.reject("Must provide limit")
             return
@@ -593,8 +491,11 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             return
         }
 
+        let endDate = getDateFromString(inputDate: _endDate)
+
         guard let anchorDate = calendar.date(from: anchorComponents) else {
-            fatalError("*** unable to create a valid date from the given components ***")
+            call.reject("Unable to create anchor date")
+            return
         }
 
         guard let quantityType = getSampleType(sampleName: _sampleName) as? HKQuantityType else {
@@ -617,9 +518,103 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             }
 
             var output: [[String: Any]] = []
-            let iso8601DateFormatter = ISO8601DateFormatter()
-            iso8601DateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
- 
+
+            let localDateFormatter = DateFormatter()
+            localDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            localDateFormatter.timeZone = TimeZone.current
+            
+            statsCollection.enumerateStatistics(from: startDate, to: endDate) { statistics, stop in
+
+                if let quantity = statistics.sumQuantity() {
+                    var _unit: HKUnit = HKUnit.count()
+                    if statistics.quantityType.is(compatibleWith: HKUnit.minute()) {
+                        _unit = HKUnit.minute()
+                    } else if statistics.quantityType.is(compatibleWith: HKUnit.kilocalorie()) {
+                        _unit = HKUnit.kilocalorie()
+                    }
+                    
+                    let value = quantity.doubleValue(for: _unit)
+                    let localDateString = localDateFormatter.string(from: statistics.startDate)
+
+                    output.append([
+                        "value": value,
+                        "startDate": localDateString,
+                        "date": localDateString
+                    ])
+                }
+            }
+            call.resolve([
+                "resultData": output
+            ])
+        }
+
+        healthStore.execute(query)
+    }
+
+    @objc func queryAggregatedDailySampleTypeAnchored(_ call: CAPPluginCall) {
+        let calendar = Calendar.current
+
+        let interval = DateComponents(day: 1)
+
+        var anchorComponents = calendar.dateComponents([.day, .month, .year], from: Date())
+        anchorComponents.hour = 0
+
+        guard let _sampleName = call.options["sampleName"] as? String else {
+            call.reject("Must provide sampleName")
+            return
+        }
+        guard let _startDate = call.options["startDate"] as? String else {
+            call.reject("Must provide startDate")
+            return
+        }
+        guard let endDateString = call.options["endDate"] as? String else {
+            call.reject("Must provide endDate")
+            return
+        }
+        
+        let _endDate = getDateFromString(inputDate: endDateString)
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+
+        guard let startDate = dateFormatter.date(from: _startDate) else {
+            call.reject("Invalid startDate format, expected yyyy/MM/dd")
+            return
+        }
+
+        guard let anchorDate = calendar.date(from: anchorComponents) else {
+            call.reject("Unable to create anchor date")
+            return
+        }
+
+        guard let quantityType = getSampleType(sampleName: _sampleName) as? HKQuantityType else {
+            call.reject("Unable to create aggregate for type \(_sampleName)")
+            return
+        }
+
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: _endDate, options: .strictStartDate)
+
+        let query = HKStatisticsCollectionQuery(
+            quantityType: quantityType,
+            quantitySamplePredicate: predicate,
+            options: .cumulativeSum,
+            anchorDate: anchorDate,
+            intervalComponents: interval
+        )
+
+        query.initialResultsHandler = { query, results, error in
+            
+            guard let statsCollection = results else {
+                call.reject("Unable to create aggregate for type \(_sampleName)")
+                return
+            }
+
+            var output: [[String: Any]] = []
+
+            let localDateFormatter = DateFormatter()
+            localDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            localDateFormatter.timeZone = TimeZone.current  // Use device timezone
+
             statsCollection.enumerateStatistics(from: startDate, to: _endDate) { statistics, stop in
 
                 if let quantity = statistics.sumQuantity() {
@@ -630,18 +625,23 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
                         _unit = HKUnit.kilocalorie()
                     }
                     
-                    // FIXED: Removed the +9 hour hack, use actual startDate
                     let value = quantity.doubleValue(for: _unit)
 
+                    // Use the local date representation
+                    let localDateString = localDateFormatter.string(from: statistics.startDate)
                     output.append([
                         "value": value,
-                        "startDate": iso8601DateFormatter.string(from: statistics.startDate),
-                        "date": iso8601DateFormatter.string(from: statistics.startDate)
+                        "startDate": localDateString,
+                        "date": localDateString
                     ])
                 }
             }
+
+            let anchorTimestamp = String(Date().timeIntervalSince1970)
+
             call.resolve([
-                "resultData": output
+                "resultData": output,
+                "anchor": anchorTimestamp
             ])
         }
 
