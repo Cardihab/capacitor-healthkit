@@ -1,6 +1,6 @@
 {
   "name": "@perfood/capacitor-healthkit",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Capacitor plugin to read data from and write data to Apple Health",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
