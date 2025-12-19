@@ -922,32 +922,6 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
         return formatter.date(from: inputDate)!
     }
 
-    
-    @objc func requestAuthorization(_ call: CAPPluginCall) {
-        if !HKHealthStore.isHealthDataAvailable() {
-            return call.reject("Health data not available")
-        }
-        guard let _all = call.options["all"] as? [String] else {
-            return call.reject("Must provide all")
-        }
-        guard let _read = call.options["read"] as? [String] else {
-            return call.reject("Must provide read")
-        }
-        guard let _write = call.options["write"] as? [String] else {
-            return call.reject("Must provide write")
-        }
-
-        let writeTypes: Set<HKSampleType> = getTypes(items: _write).union(getTypes(items: _all))
-        let readTypes: Set<HKSampleType> = getTypes(items: _read).union(getTypes(items: _all))
-
-        healthStore.requestAuthorization(toShare: writeTypes, read: readTypes) { success, _ in
-            if !success {
-                call.reject("Could not get permission")
-                return
-            }
-            call.resolve()
-        }
-    }
     @objc func queryHKitSampleType(_ call: CAPPluginCall) {
         guard let _sampleName = call.options["sampleName"] as? String else {
             return call.reject("Must provide sampleName")
@@ -998,23 +972,6 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             ])
         } else {
             return call.reject("Health data not available")
-        }
-    }
-
-    @objc func isEditionAuthorized(_ call: CAPPluginCall) {
-        guard let sampleName = call.options["sampleName"] as? String else {
-            return call.reject("Must provide sampleName")
-        }
-
-        let sampleType: HKSampleType? = getSampleType(sampleName: sampleName)
-        if sampleType == nil {
-            return call.reject("Cannot match sample name")
-        }
-
-        if healthStore.authorizationStatus(for: sampleType!) == .sharingAuthorized {
-            return call.resolve()
-        } else {
-            return call.reject("Permission Denied to Access data")
         }
     }
 
