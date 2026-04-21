@@ -402,9 +402,13 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             return call.reject("Must provide endDate")
         }
         
-        let _startDate = getDateFromString(inputDate: startDateString)
-        let _endDate = getDateFromString(inputDate: endDateString)
-        
+        guard let _startDate = getDateFromString(inputDate: startDateString) else {
+            return call.reject("Invalid startDate format")
+        }
+        guard let _endDate = getDateFromString(inputDate: endDateString) else {
+            return call.reject("Invalid endDate format")
+        }
+
         // Get anchor if provided (base64 encoded)
         var anchor: HKQueryAnchor? = nil
         if let anchorData = call.options["anchor"] as? String,
@@ -491,7 +495,10 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             return
         }
 
-        let endDate = getDateFromString(inputDate: _endDate)
+        guard let endDate = getDateFromString(inputDate: _endDate) else {
+            call.reject("Invalid endDate format")
+            return
+        }
 
         guard let anchorDate = calendar.date(from: anchorComponents) else {
             call.reject("Unable to create anchor date")
@@ -512,6 +519,11 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
         query.initialResultsHandler = {
             query, results, error in
 
+            if let error = error {
+                call.reject("HealthKit query error: \(error.localizedDescription)")
+                return
+            }
+
             guard let statsCollection = results else {
                 call.reject("Unable to create aggregate for type \(_sampleName)")
                 return
@@ -520,9 +532,9 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             var output: [[String: Any]] = []
 
             let localDateFormatter = DateFormatter()
-            localDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            localDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
             localDateFormatter.timeZone = TimeZone.current
-            
+
             statsCollection.enumerateStatistics(from: startDate, to: endDate) { statistics, stop in
 
                 if let quantity = statistics.sumQuantity() {
@@ -572,7 +584,10 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             return
         }
         
-        let _endDate = getDateFromString(inputDate: endDateString)
+        guard let _endDate = getDateFromString(inputDate: endDateString) else {
+            call.reject("Invalid endDate format")
+            return
+        }
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy/MM/dd"
@@ -603,7 +618,12 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
         )
 
         query.initialResultsHandler = { query, results, error in
-            
+
+            if let error = error {
+                call.reject("HealthKit query error: \(error.localizedDescription)")
+                return
+            }
+
             guard let statsCollection = results else {
                 call.reject("Unable to create aggregate for type \(_sampleName)")
                 return
@@ -612,8 +632,8 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             var output: [[String: Any]] = []
 
             let localDateFormatter = DateFormatter()
-            localDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-            localDateFormatter.timeZone = TimeZone.current  // Use device timezone
+            localDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+            localDateFormatter.timeZone = TimeZone.current
 
             statsCollection.enumerateStatistics(from: startDate, to: _endDate) { statistics, stop in
 
@@ -916,10 +936,16 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
         return deviceInformation;
     }
 
-    func getDateFromString(inputDate: String) -> Date{
+    func getDateFromString(inputDate: String) -> Date? {
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions =  [.withInternetDateTime, .withFractionalSeconds]
-        return formatter.date(from: inputDate)!
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatter.date(from: inputDate) {
+            return date
+        }
+        // Fallback: try without fractional seconds (iOS 13.x compatibility)
+        let fallback = ISO8601DateFormatter()
+        fallback.formatOptions = [.withInternetDateTime]
+        return fallback.date(from: inputDate)
     }
 
     @objc func queryHKitSampleType(_ call: CAPPluginCall) {
@@ -933,8 +959,12 @@ public class CapacitorHealthkitPlugin: CAPPlugin {
             return call.reject("Must provide endDate")
         }
 
-        let _startDate = getDateFromString(inputDate: startDateString)
-        let _endDate = getDateFromString(inputDate: endDateString)
+        guard let _startDate = getDateFromString(inputDate: startDateString) else {
+            return call.reject("Invalid startDate format")
+        }
+        guard let _endDate = getDateFromString(inputDate: endDateString) else {
+            return call.reject("Invalid endDate format")
+        }
         guard let _limit = call.options["limit"] as? Int else {
             return call.reject("Must provide limit")
         }
