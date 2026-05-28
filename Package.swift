@@ -20,8 +20,10 @@ let package = Package(
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
                 .product(name: "Cordova", package: "capacitor-swift-pm")
             ],
-            path: "ios/Plugin"
-            // HealthKit is a system framework — no SPM dependency declaration needed
+            path: "ios/Plugin",
+            // Exclude ObjC bridge files — CAP_PLUGIN macro is for CocoaPods only;
+            // SPM uses the @objc class annotation in the Swift file directly.
+            sources: ["CapacitorHealthkitPlugin.swift"]
         )
     ]
 )
