@@ -9,7 +9,20 @@ var healthStore = HKHealthStore()
  * here: https://capacitorjs.com/docs/plugins/ios
  */
 @objc(CapacitorHealthkitPlugin)
-public class CapacitorHealthkitPlugin: CAPPlugin {
+public class CapacitorHealthkitPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "CapacitorHealthkitPlugin"
+    public let jsName = "CapacitorHealthkit"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "requestAuthorization", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "queryHKitSampleType", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "queryHKitSampleTypeAnchored", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "isAvailable", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "queryAggregatedDailySampleType", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "queryAggregatedDailySampleTypeAnchored", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "multipleQueryHKitSampleType", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "isEditionAuthorized", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "multipleIsEditionAuthorized", returnType: CAPPluginReturnPromise),
+    ]
 
     enum HKSampleError: Error {
         case sleepRequestFailed
