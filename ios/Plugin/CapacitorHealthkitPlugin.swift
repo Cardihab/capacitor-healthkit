@@ -93,10 +93,6 @@ public class CapacitorHealthkitPlugin: CAPPlugin, CAPBridgedPlugin {
             return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!
         case "bloodPressureDiastolic":
             return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!
-        case "bloodPressure":
-            // Blood pressure is a correlation of systolic + diastolic; results are HKCorrelation,
-            // formatted by the "bloodPressure" branch in generateOutput.
-            return HKObjectType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!
         case "vo2Max":
             return HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!;
         case "sixMinuteWalkTestDistance":
@@ -157,11 +153,6 @@ public class CapacitorHealthkitPlugin: CAPPlugin, CAPBridgedPlugin {
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!)
             case "bloodPressureDiastolic":
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!)
-            case "bloodPressure":
-                // Reading the BP correlation requires read access to both component quantity types.
-                types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)!)
-                types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)!)
-                types.insert(HKObjectType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)!)
             case "vo2Max":
                 types.insert(HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.vo2Max)!);
             case "sixMinuteWalkTestDistance":

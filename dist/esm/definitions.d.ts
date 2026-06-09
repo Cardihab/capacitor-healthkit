@@ -226,7 +226,6 @@ export declare enum SampleNames {
     BODY_TEMPERATURE = "bodyTemperature",
     BLOOD_PRESSURE_SYSTOLIC = "bloodPressureSystolic",
     BLOOD_PRESSURE_DIASTOLIC = "bloodPressureDiastolic",
-    BLOOD_PRESSURE = "bloodPressure",
     VO2_MAX = "vo2Max",
     SIX_MINUTE_WALK_TEST_DISTANCE = "sixMinuteWalkTestDistance",
     MINDFULNESS = "mindfulness",
